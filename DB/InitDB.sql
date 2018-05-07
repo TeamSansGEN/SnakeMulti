@@ -15,10 +15,10 @@ CREATE TABLE IF NOT EXISTS Users (
 
 CREATE TABLE IF NOT EXISTS Leaderboard (
 	id INT NOT NULL AUTO_INCREMENT,
-	username VARCHAR(64) NOT NULL,
+    user_id INT NOT NULL,
     games_played INT NOT NULL DEFAULT 0,
     games_win INT NOT NULL DEFAULT 0,
     total_score INT NOT NULL DEFAULT 0,
     PRIMARY KEY(id),
-    FOREIGN KEY(username) REFERENCES Users(username)
+    FOREIGN KEY(user_id) REFERENCES Users(user_id)
 );
