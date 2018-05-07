@@ -3,8 +3,12 @@ package gen.snakemulti.sprites;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import gen.snakemulti.SnakeMulti;
 
+import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,32 +30,39 @@ public class Snake {
     private Vector2 headPosition;
     private Vector2 tailPosition;
 
+    private String textureImg;
     private float speed;
     private String direction;
-
+    private boolean alive;
     private int size;
 
     private List<Texture> snake;
 
-    public Snake(float x, float y, String directionInit) {
+    public Snake(float x, float y, String directionInit, String textureImg) {
         headPosition = new Vector2(x, y);
         tailPosition = new Vector2(headPosition.x, headPosition.y);
         speed = 300f;
-
+        alive = true;
         direction = directionInit;
         size = NUMBER_BODYPART_INIT;
         bodyParts = new ArrayList<Vector2>();
         snake = new ArrayList<Texture>();
-        snake.add(new Texture("snake.png"));
+        snake.add(new Texture(textureImg));
         bodyParts.add(headPosition);
+        this.textureImg = textureImg;
 
         for(int i = 1; i < size; i++) {
             addBodyPart();
         }
     }
 
+    public void kill() {
+        alive = false;
+        System.out.println("ME DEAD");
+    }
+
     public void addBodyPart() {
-        snake.add(new Texture("snake.png"));
+        snake.add(new Texture(textureImg));
 
         float newX = 0;
         float newY = 0;
@@ -85,6 +96,28 @@ public class Snake {
 
     }
 
+    public boolean collides() {
+        for(int i = 1; i < bodyParts.size(); i++) {
+            //System.out.println("Collision: ");
+            //System.out.println("head("+headPosition.x+","+headPosition.y+")  body("+bodyParts.get(i).x+","+bodyParts.get(i).y+")");
+            if (headPosition.x == bodyParts.get(i).x && headPosition.y == bodyParts.get(i).y) {
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean collides(Snake otherSnake) {
+        for(int i = 0; i < otherSnake.getBodyParts().size(); i++) {
+            System.out.println("head("+headPosition.x+","+headPosition.y+")  body("+otherSnake.getBodyParts().get(i).x+","+otherSnake.getBodyParts().get(i).y+")");
+            if(headPosition.x == otherSnake.getBodyParts().get(i).x && headPosition.y == otherSnake.getBodyParts().get(i).y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public int getSize() {
         return size;
     }
@@ -110,23 +143,29 @@ public class Snake {
     }
 
     public void update(float dt) {
+        if(alive) {
+            moveSnake();
+            moveSnakeHead(dt);
 
-        moveSnake();
-        moveSnakeHead(dt);
-        if(headPosition.x >= SnakeMulti.WIDTH) {
-            headPosition.x = 0;
+            if (headPosition.x >= SnakeMulti.WIDTH) {
+                headPosition.x = 0;
+            }
+
+            if (headPosition.x < 0) {
+                headPosition.x = SnakeMulti.WIDTH;
+            }
+
+            if (headPosition.y >= SnakeMulti.HEIGHT) {
+                headPosition.y = 0;
+            }
+
+            if (headPosition.y < 0) {
+                headPosition.y = SnakeMulti.HEIGHT;
+            }
+            alive = !collides();
         }
+        else {
 
-        if(headPosition.x < 0) {
-            headPosition.x = SnakeMulti.WIDTH;
-        }
-
-        if(headPosition.y >= SnakeMulti.HEIGHT) {
-            headPosition.y = 0;
-        }
-
-        if(headPosition.y < 0) {
-            headPosition.y = SnakeMulti.HEIGHT;
         }
     }
 
