@@ -110,7 +110,7 @@ public class Snake {
 
     public boolean collides(Snake otherSnake) {
         for(int i = 0; i < otherSnake.getBodyParts().size(); i++) {
-            System.out.println("head("+headPosition.x+","+headPosition.y+")  body("+otherSnake.getBodyParts().get(i).x+","+otherSnake.getBodyParts().get(i).y+")");
+            //System.out.println("head("+headPosition.x+","+headPosition.y+")  body("+otherSnake.getBodyParts().get(i).x+","+otherSnake.getBodyParts().get(i).y+")");
             if(headPosition.x == otherSnake.getBodyParts().get(i).x && headPosition.y == otherSnake.getBodyParts().get(i).y) {
                 return true;
             }
