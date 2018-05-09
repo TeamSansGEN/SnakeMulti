@@ -58,7 +58,6 @@ public class Snake {
 
     public void kill() {
         alive = false;
-        System.out.println("ME DEAD");
     }
 
     public void addBodyPart() {
