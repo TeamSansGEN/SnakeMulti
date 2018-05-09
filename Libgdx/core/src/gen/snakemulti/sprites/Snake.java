@@ -9,25 +9,28 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import gen.snakemulti.SnakeMulti;
 
 import java.awt.geom.RectangularShape;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Snake {
+public class Snake implements Serializable {
 
+
+    private static final long serialVersionUID = 6529685098267757690L;
     //TODO classe avec toutes les constantes
 
-    public static final String UP    =    "up";
-    public static final String LEFT  =  "left";
-    public static final String RIGHT = "right";
-    public static final String DOWN  =  "down";
+    public static final transient String UP    =    "up";
+    public static final transient String LEFT  =  "left";
+    public static final transient String RIGHT = "right";
+    public static final transient String DOWN  =  "down";
 
-    private static final int NUMBER_BODYPART_INIT = 50;
+    private static final transient int NUMBER_BODYPART_INIT = 50;
 
     // bodyParts of the snake. Each couple (x,y) represents a bodyPart.
     // At the start of the game, 'bodyParts' is filled with the default number of bodyParts
     private List<Vector2> bodyParts;
 
-    private Vector2 headPosition;
+    private Vector2  headPosition;
     private Vector2 tailPosition;
 
     private String textureImg;
@@ -36,9 +39,12 @@ public class Snake {
     private boolean alive;
     private int size;
 
-    private List<Texture> snake;
+    private String name;
+    private String ipAdress;
 
-    public Snake(float x, float y, String directionInit, String textureImg) {
+    private transient List<Texture> snake;
+
+    public Snake(float x, float y, String directionInit, String textureImg, String name, String ipAdress) {
         headPosition = new Vector2(x, y);
         tailPosition = new Vector2(headPosition.x, headPosition.y);
         speed = 300f;
@@ -51,9 +57,17 @@ public class Snake {
         bodyParts.add(headPosition);
         this.textureImg = textureImg;
 
+        this.name = name;
+        this.ipAdress = ipAdress;
+
         for(int i = 1; i < size; i++) {
             addBodyPart();
         }
+    }
+
+    public String getName(){
+
+        return name;
     }
 
     public void kill() {
@@ -168,6 +182,10 @@ public class Snake {
         }
     }
 
+    public boolean isAlive(){
+        return alive;
+    }
+
     public List<Vector2> getBodyParts() {
         return new ArrayList<Vector2>(bodyParts);
     }
@@ -198,6 +216,24 @@ public class Snake {
 
     public void setDirection(String direction) {
         this.direction = direction;
+    }
+
+    public String getIpAdress(){
+
+        return ipAdress;
+    }
+
+    public String toString(){
+
+        StringBuilder s = new StringBuilder();
+        s.append("IP :" + ipAdress + " ");
+        s.append("Name :" + name + " ");
+        s.append("Body : " + getBodyParts().get(0));
+        for (int i = 0; i< getBodyParts().size(); ++i) {
+            s.append(" ," + getBodyParts().get(i));
+        }
+
+        return s.toString();
     }
 }
 
