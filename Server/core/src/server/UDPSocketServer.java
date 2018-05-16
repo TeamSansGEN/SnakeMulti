@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import gen.snakemulti.sprites.*;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -17,6 +18,9 @@ public class UDPSocketServer {
     private DatagramSocket socket;
     private InetAddress ipAddress;
     private static Map<String, Snake> players; // <username, snake>
+    private int numberOfPlayers;
+
+    private static int numberOfReadyPlayers = 0;
 
     private static final int[][] INITIAL_POSITIONS = {{50, 600}, {900, 600}, {900, 40}, {50, 40}};
 
@@ -24,6 +28,7 @@ public class UDPSocketServer {
 
         this.port = port;
         players = new HashMap<String, Snake>();
+        numberOfPlayers = 0;
 
         try {
             this.ipAddress = InetAddress.getByName(ipAddress);
@@ -110,8 +115,8 @@ public class UDPSocketServer {
 
 
     public void initGame(String[] playersList){
-
-        for(int i = 0; i < playersList.length; i++) {
+        numberOfPlayers = playersList.length;
+        for(int i = 0; i < numberOfPlayers; i++) {
 
             int initX = INITIAL_POSITIONS[i][0];
             int initY = INITIAL_POSITIONS[i][1];
@@ -121,6 +126,46 @@ public class UDPSocketServer {
             Snake s = new Snake(initX, initY, initDirection, playersList[i], "127.0.0.1");
             players.put(playersList[i], s);
         }
+
+        // wait to receive 'ready' from all players
+        // and send go when everyone is 'ready'.
+        receiveReadySendGo();
+    }
+
+    private void receiveReadySendGo() {
+        byte[] buffer = new byte[1024];
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+
+        while(true) {
+            try {
+                socket.receive(packet);
+                buffer = packet.getData();
+                String data = new String(buffer);
+                if(data.equals("ready")) {
+                    numberOfReadyPlayers++;
+                    break;
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        byte[] goMsg = "go".getBytes();
+        DatagramPacket goPacket = new DatagramPacket(goMsg, goMsg.length, packet.getAddress(), packet.getPort());
+
+        while(true) {
+            try {
+                if(numberOfReadyPlayers == numberOfPlayers) {
+                    socket.send(goPacket);
+                    break;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
     }
 
 }

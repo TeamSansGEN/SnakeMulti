@@ -19,7 +19,7 @@ public class LobbyState extends State {
     @Override
     public void handleInput() {
         if(Gdx.input.justTouched()) {
-            gsm.set(new PlayState(gsm, 1));
+            gsm.set(new PlayState(gsm, 2));
             dispose(); //free memory
         }
     }
