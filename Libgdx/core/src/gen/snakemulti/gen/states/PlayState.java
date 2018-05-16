@@ -137,30 +137,6 @@ public class PlayState extends State {
         sb.begin();
         sb.draw(background, 0, 0, SnakeMulti.WIDTH, SnakeMulti.HEIGHT);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
         int playerNumber = 1;
         for(Snake s : players.values()) {
             for(int i = 0; i < snake.getSize(); i++) {
@@ -226,7 +202,7 @@ public class PlayState extends State {
 
     public void sendUPD(Snake snake) {
 
-        String serverIP = "127.0.0.1";
+        String serverIP = "10.192.91.239";
         int port = 2829;
 
         try {
