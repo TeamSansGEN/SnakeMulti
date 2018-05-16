@@ -19,7 +19,7 @@ public class SnakeMulti extends ApplicationAdapter {
     public static final String TITLE = "Snake Multi";
 
     private GameStateManager gsm;
-    private SpriteBatch batch; //heady, should be only one
+    private SpriteBatch batch; //heavy, should be only one
 
 	AssetManager assets;
 

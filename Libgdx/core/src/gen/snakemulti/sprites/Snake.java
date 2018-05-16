@@ -8,13 +8,13 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import gen.snakemulti.SnakeMulti;
 
+import javax.xml.crypto.Data;
 import java.awt.geom.RectangularShape;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Snake implements Serializable {
-
 
     private static final long serialVersionUID = 6529685098267757690L;
     //TODO classe avec toutes les constantes
@@ -23,6 +23,10 @@ public class Snake implements Serializable {
     public static final transient String LEFT  =  "left";
     public static final transient String RIGHT = "right";
     public static final transient String DOWN  =  "down";
+
+    public static final String[] DIRECTIONS = {RIGHT, DOWN, LEFT, UP};
+
+    public static final int BODY_SIZE = 4;
 
     private static final transient int NUMBER_BODYPART_INIT = 50;
 
@@ -33,7 +37,6 @@ public class Snake implements Serializable {
     private Vector2  headPosition;
     private Vector2 tailPosition;
 
-    private String textureImg;
     private float speed;
     private String direction;
     private boolean alive;
@@ -42,9 +45,8 @@ public class Snake implements Serializable {
     private String name;
     private String ipAdress;
 
-    private transient List<Texture> snake;
 
-    public Snake(float x, float y, String directionInit, String textureImg, String name, String ipAdress) {
+    public Snake(float x, float y, String directionInit, String name, String ipAdress) {
         headPosition = new Vector2(x, y);
         tailPosition = new Vector2(headPosition.x, headPosition.y);
         speed = 300f;
@@ -52,10 +54,7 @@ public class Snake implements Serializable {
         direction = directionInit;
         size = NUMBER_BODYPART_INIT;
         bodyParts = new ArrayList<Vector2>();
-        snake = new ArrayList<Texture>();
-        snake.add(new Texture(textureImg));
         bodyParts.add(headPosition);
-        this.textureImg = textureImg;
 
         this.name = name;
         this.ipAdress = ipAdress;
@@ -72,29 +71,27 @@ public class Snake implements Serializable {
 
     public void kill() {
         alive = false;
-        System.out.println("ME DEAD");
     }
 
     public void addBodyPart() {
-        snake.add(new Texture(textureImg));
 
         float newX = 0;
         float newY = 0;
 
         if(direction.equals(UP)) {
             newX = tailPosition.x;
-            newY = tailPosition.y - snake.get(0).getHeight() ;
+            newY = tailPosition.y - BODY_SIZE;
         }
         else if(direction.equals(LEFT)) {
-            newX = tailPosition.x + snake.get(0).getWidth();
+            newX = tailPosition.x + BODY_SIZE;
             newY = tailPosition.y;
         }
         else if(direction.equals(DOWN)) {
             newX = tailPosition.x;
-            newY = tailPosition.y + snake.get(0).getHeight();
+            newY = tailPosition.y + BODY_SIZE;
         }
         else if(direction.equals(RIGHT)) {
-            newX = tailPosition.x - snake.get(0).getWidth();
+            newX = tailPosition.x - BODY_SIZE;
             newY = tailPosition.y;
         }
 
@@ -195,9 +192,9 @@ public class Snake implements Serializable {
         return headPosition;
     }
 
-    public List<Texture> getTexture() {
+    /*public List<Texture> getTexture() {
         return new ArrayList<Texture>(snake);
-    }
+    }*/
 
     public void moveX(float amount) {
         headPosition.x += amount;

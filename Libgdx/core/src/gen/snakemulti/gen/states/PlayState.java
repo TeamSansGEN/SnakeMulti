@@ -4,15 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import gen.snakemulti.SnakeMulti;
 import gen.snakemulti.sprites.Snake;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import java.net.DatagramPacket;
+import java.util.Map;
 
 public class PlayState extends State {
 
@@ -20,47 +24,69 @@ public class PlayState extends State {
 
     private int numberOfPlayers;
 
-    private List<Snake> snakes;
+    private DatagramSocket clientSocket;
+
+    private Snake snake;
+
+    private Map<String, Snake> players;
+
+    //private List<Snake> snakes;
 
     public PlayState(GameStateManager gsm, int numberOfPlayers) {
         super(gsm);
         this.numberOfPlayers = numberOfPlayers;
         background = new Texture("backgroundLobby.png");
-        snakes = new ArrayList<Snake>();
-
-        //for(int i = 0; i < numberOfPlayers; i++) {
+        //snakes = new ArrayList<Snake>();
+        players = new HashMap<String, Snake>();
+        players.put("Jee", new Snake( 50, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
+        players.put("Lio", new Snake(900, 600,  Snake.DOWN, "Lio", "127.0.0.1"));
         //position du snake doit être multiple de 4
-        snakes.add(new Snake(200, 400, Snake.RIGHT, "snake1.png", "joueur1", "127.0.0.1"));
-        snakes.add(new Snake(400, 200, Snake.LEFT, "snake2.png", "joueur2", "127.0.0.1"));
-        //}
+        //snakes.add(new Snake(200, 400, Snake.RIGHT, "snake1.png", "joueur1", "10.192.91.230"));
+        //snakes.add(new Snake(400, 200, Snake.LEFT, "snake2.png", "joueur2", "10.192.91.230"));
+        snake = getClientSnake("Jee");
 
+        try {
+            clientSocket = new DatagramSocket();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        ;
+    }
+
+    private Snake getClientSnake(String username) {
+        for(String key : players.keySet()) {
+            if(key.equals(username)) {
+                return players.get(key);
+            }
+        }
+        return null;
     }
 
     @Override
     protected void handleInput() {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.W)) { // Move up
-            if (snakes.get(0).getDirection() != Snake.DOWN)
-                snakes.get(0).setDirection(Snake.UP);
+            if (snake.getDirection() != Snake.DOWN)
+                snake.setDirection(Snake.UP);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.A)) { // Move left
-            if (snakes.get(0).getDirection() != Snake.RIGHT)
-                snakes.get(0).setDirection(Snake.LEFT);
+            if (snake.getDirection() != Snake.RIGHT)
+                snake.setDirection(Snake.LEFT);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) { // Move down
-            if (snakes.get(0).getDirection() != Snake.UP)
-                snakes.get(0).setDirection(Snake.DOWN);
+            if (snake.getDirection() != Snake.UP)
+                snake.setDirection(Snake.DOWN);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.D)) { // Move right
-            if (snakes.get(0).getDirection() != Snake.LEFT)
-                snakes.get(0).setDirection(Snake.RIGHT);
+            if (snake.getDirection() != Snake.LEFT)
+                snake.setDirection(Snake.RIGHT);
         }
 
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) { // Move up
+        /*if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) { // Move up
             if (snakes.get(1).getDirection() != Snake.DOWN)
                 snakes.get(1).setDirection(Snake.UP);
         }
@@ -78,7 +104,7 @@ public class PlayState extends State {
         if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) { // Move right
             if (snakes.get(1).getDirection() != Snake.LEFT)
                 snakes.get(1).setDirection(Snake.RIGHT);
-        }
+        }*/
 
     }
 
@@ -86,16 +112,24 @@ public class PlayState extends State {
     public void update(float dt) {
         handleInput();
 
-        snakes.get(0).update(dt);
-        snakes.get(1).update(dt);
+        snake.update(dt);
+        //snakes.get(1).update(dt);
 
-        if (snakes.get(0).collides(snakes.get(1))) {
+        /*if (snakes.get(0).collides(snakes.get(1))) {
             snakes.get(0).kill();
         }
 
         if (snakes.get(1).collides(snakes.get(0))) {
             snakes.get(1).kill();
+        }*/
+
+        if (snake.isAlive()) {
+            //sendUPD(snakes.get(0));
+            sendPosition(snake);
         }
+
+        //receivUPD(2829);
+        players = receivePosition();
     }
 
     @Override
@@ -103,48 +137,101 @@ public class PlayState extends State {
         sb.begin();
         sb.draw(background, 0, 0, SnakeMulti.WIDTH, SnakeMulti.HEIGHT);
 
-        if (snakes.get(0).isAlive()) {
-            sendUPD(snakes.get(0));
-        }
-
-        if (snakes.get(1).isAlive()) {
-            sendUPD(snakes.get(1));
-        }
 
 
-        //UDPtest u = new UDPtest(3333);
-        //u.clientUDP();
-        //Snake s1 = u.receivUPD(3333);
 
-        for (int i = 0; i < snakes.get(0).getSize(); i++) {
-            sb.draw(snakes.get(0).getTexture().get(i), snakes.get(0).getBodyParts().get(i).x, snakes.get(0).getBodyParts().get(i).y);
-        }
-        for (int i = 0; i < snakes.get(1).getSize(); i++) {
-            sb.draw(snakes.get(1).getTexture().get(i), snakes.get(1).getBodyParts().get(i).x, snakes.get(1).getBodyParts().get(i).y);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        int playerNumber = 1;
+        for(Snake s : players.values()) {
+            for(int i = 0; i < snake.getSize(); i++) {
+                String textureName = "snake" + playerNumber + ".png";
+                sb.draw(new Texture(textureName), s.getBodyParts().get(i).x, s.getBodyParts().get(i).y);
+            }
+            playerNumber++;
         }
 
         sb.end();
-
     }
 
     @Override
     public void dispose() {
         background.dispose();
+        clientSocket.close();
     }
 
-    public ArrayList<Snake> getSnake() {
+    private void sendPosition(Snake snake) {
+        byte[] sendData = new byte[8192];
+
+        try {
+            ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+            ObjectOutput oo = new ObjectOutputStream(bStream);
+            oo.writeObject(snake);
+            oo.close();
+
+            sendData = bStream.toByteArray();
+
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("127.0.0.1"), 2829);
+            clientSocket.send(sendPacket);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Map<String, Snake> receivePosition() {
+        byte[] receiveData = new byte[8192];
+        Map<String, Snake> positions = null;
+        try {
+            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+            clientSocket.receive(receivePacket);
+            //System.out.println(new String(receivePacket.getData()));
+
+            ByteArrayInputStream bis = new ByteArrayInputStream(receiveData);
+            ObjectInputStream in = new ObjectInputStream(bis);
+            positions = (Map<String, Snake>) in.readObject();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return positions;
+    }
+
+    /*public ArrayList<Snake> getSnake() {
 
         return new ArrayList<Snake>(snakes);
-    }
+    }*/
 
     public void sendUPD(Snake snake) {
 
-        String hostname = snake.getIpAdress();
+        String serverIP = "127.0.0.1";
         int port = 2829;
 
         try {
 
-            InetAddress address = InetAddress.getByName(hostname);
+            InetAddress address = InetAddress.getByName(serverIP);
             DatagramSocket socket = new DatagramSocket();
 
             ByteArrayOutputStream bStream = new ByteArrayOutputStream();
@@ -156,6 +243,7 @@ public class PlayState extends State {
 
             DatagramPacket request = new DatagramPacket(buffer, buffer.length, address, port);
             socket.send(request);
+            System.out.println("CLIENT => SERVER");
             socket.close();
         } catch (SocketException e) {
             e.printStackTrace();
@@ -190,14 +278,7 @@ public class PlayState extends State {
                 ByteArrayInputStream in = new ByteArrayInputStream(data);
                 ObjectInputStream is = new ObjectInputStream(in);
 
-                try {
-
-                    snake = (Snake) is.readObject();
-                    System.out.println("Snake object received TO DRAW = " + snake);
-
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+                System.out.println(data.length);
 
             }
         } catch (SocketException e) {
