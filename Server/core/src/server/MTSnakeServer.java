@@ -56,8 +56,9 @@ public class MTSnakeServer {
 
         public void run() {
 
-            UDPSocketServer s = new UDPSocketServer(portUDP);
-            s.createAndListenSocket();
+            UDPSocketServer s = new UDPSocketServer("127.0.0.1", portUDP);
+            s.initGame(new String[]{"Jee", "Lio"});
+            s.listen();
         }
     }
 

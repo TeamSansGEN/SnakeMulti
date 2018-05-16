@@ -7,127 +7,120 @@ import gen.snakemulti.sprites.*;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class UDPSocketServer {
 
     private int port;
+    private DatagramSocket socket;
+    private InetAddress ipAddress;
+    private static Map<String, Snake> players; // <username, snake>
 
-    public UDPSocketServer(int port) {
+    private static final int[][] INITIAL_POSITIONS = {{50, 600}, {900, 600}, {900, 40}, {50, 40}};
+
+    public UDPSocketServer(String ipAddress, int port) {
 
         this.port = port;
-    }
-
-    public void createAndListenSocket() {
-
-        //initGame(2);
+        players = new HashMap<String, Snake>();
 
         try {
+            this.ipAddress = InetAddress.getByName(ipAddress);
+            socket = new DatagramSocket(port);
 
-
-            DatagramSocket serverUDP = new DatagramSocket(port);
-
-            while (true) {
-
-
-                //On s'occupe maintenant de l'objet paquet
-                byte[] buffer = new byte[8192];
-                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-
-                //Cette méthode permet de récupérer le datagramme envoyé par le client
-                //Elle bloque le thread jusqu'à ce que celui-ci ait reçu quelque chose.
-                serverUDP.receive(packet);
-
-                byte[] data = packet.getData();
-                ByteArrayInputStream in = new ByteArrayInputStream(data);
-                ObjectInputStream is = new ObjectInputStream(in);
-
-                Snake snake = null;
-
-                try {
-
-                    snake = (Snake) is.readObject();
-                    System.out.println("Snake object received = " + snake);
-
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                String hostname = snake.getIpAdress();
-
-                try {
-
-                    InetAddress address = InetAddress.getByName(hostname);
-                    DatagramSocket socket = new DatagramSocket();
-
-                    ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-                    ObjectOutput oo = new ObjectOutputStream(bStream);
-                    oo.writeObject(snake);
-                    oo.close();
-
-                    byte[] buffer2 = bStream.toByteArray();
-
-                    DatagramPacket request = new DatagramPacket(buffer2, buffer2.length, address, 3333);
-                    System.out.println(address);
-                    socket.send(request);
-                }
-                catch (SocketException e) {
-                    e.printStackTrace();
-                }
-                catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
         } catch (SocketException e) {
             e.printStackTrace();
-        } catch (IOException i) {
-            i.printStackTrace();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
         }
     }
 
-    /*
-    public void initGame(int numberOfPlayers){
+    public void listen() {
+        while(true) {
+            byte[] bufferReceive = new byte[8192];
+            byte[] bufferSend = new byte[8192];
+            DatagramPacket packet = new DatagramPacket(bufferReceive, bufferReceive.length);
+            DatagramPacket sendPacket = null;
+            try {
+                socket.receive(packet);
 
-        //TODO forloop
+                bufferReceive = packet.getData();
+                ByteArrayInputStream in = new ByteArrayInputStream(bufferReceive);
+                ObjectInputStream is = new ObjectInputStream(in);
 
-        Snake s1 =  new Snake(200, 400, Snake.RIGHT, "snake1.png", "JEE", "10.192.91.230");
-        Snake s2 =  new Snake(200, 400, Snake.RIGHT, "snake2.png", "LIO", "10.192.95.118");
+                Snake snake = (Snake) is.readObject();
 
-        ArrayList<Snake> snakes = new ArrayList<Snake>();
-        snakes.add(s1);
-        snakes.add(s2);
+                //System.out.println("Data received => position("+snake.getHeadPosition().x
+                //                    +","+snake.getHeadPosition().y+")");
 
-        String hostname = s1.getIpAdress();
 
+                players.put(snake.getName(), snake);
+
+                ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+                ObjectOutputStream out = new ObjectOutputStream(byteOut);
+                out.writeObject(players);
+                bufferSend = byteOut.toByteArray();
+
+                sendPacket = new DatagramPacket(bufferSend, bufferSend.length, packet.getAddress(), packet.getPort());
+                socket.send(sendPacket);
+
+                //if(validateSnakePosition(snake.getHeadPosition(), previousPosition)) {
+                if(true) { //TODO
+                    // Send data with all positions (all snakes)
+                    //snakesPositions = new byte[]{'t', 'e', 's', 't'};
+                }
+                else {
+                    //snakesPositions = new byte[]{'0'};
+                }
+
+
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean validateSnakePosition(Vector2 currentPosition, Vector2 previousPosition) {
+        if(previousPosition == null) { //TODO a modifier, test avec s.getPosition()
+            return true;
+        }
+
+        if(currentPosition.x <= previousPosition.x + Snake.BODY_SIZE && currentPosition.x >= previousPosition.x - Snake.BODY_SIZE) {
+            return true;
+        }
+        if(currentPosition.y <= previousPosition.y + Snake.BODY_SIZE && currentPosition.y >= previousPosition.y - Snake.BODY_SIZE) {
+            return true;
+        }
+        return false;
+    }
+
+    public void sendData(byte[] data, InetAddress ipAddress, int port) {
+        DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, port);
         try {
-
-            InetAddress address = InetAddress.getByName(hostname);
-            DatagramSocket socket = new DatagramSocket();
-
-            ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-            ObjectOutput oo = new ObjectOutputStream(bStream);
-            oo.writeObject(snake);
-            oo.close();
-
-            byte[] buffer2 = bStream.toByteArray();
-
-            DatagramPacket request = new DatagramPacket(buffer2, buffer2.length, address, 3333);
-            System.out.println(address);
-            socket.send(request);
-        }
-        catch (SocketException e) {
-            e.printStackTrace();
-        }
-        catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        catch (IOException e) {
+            socket.send(packet);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    */
+
+
+    public void initGame(String[] playersList){
+
+        for(int i = 0; i < playersList.length; i++) {
+
+            int initX = INITIAL_POSITIONS[i][0];
+            int initY = INITIAL_POSITIONS[i][1];
+            String initDirection = Snake.DIRECTIONS[1];
+            String textureName = "snake"+ (i+1) + ".png";
+
+            Snake s = new Snake(initX, initY, initDirection, playersList[i], "127.0.0.1");
+            players.put(playersList[i], s);
+        }
+    }
 
 }
