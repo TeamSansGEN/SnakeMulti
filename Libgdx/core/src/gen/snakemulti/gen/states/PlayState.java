@@ -112,7 +112,7 @@ public class PlayState extends State {
         }
 
 
-        UDPtest u = new UDPtest(3333);
+        //UDPtest u = new UDPtest(3333);
         //u.clientUDP();
         //Snake s1 = u.receivUPD(3333);
 
@@ -168,7 +168,7 @@ public class PlayState extends State {
     }
 
 
-    public Snake receivUPD(int port) {
+    public void receivUPD(int port) {
 
         Snake snake = null;
 
@@ -194,7 +194,6 @@ public class PlayState extends State {
 
                     snake = (Snake) is.readObject();
                     System.out.println("Snake object received TO DRAW = " + snake);
-                    return snake;
 
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -206,8 +205,6 @@ public class PlayState extends State {
         } catch (IOException i) {
             i.printStackTrace();
         }
-
-        return snake;
     }
 
 
