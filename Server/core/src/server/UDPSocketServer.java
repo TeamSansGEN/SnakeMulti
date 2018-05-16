@@ -138,9 +138,11 @@ public class UDPSocketServer {
 
         while(true) {
             try {
+                System.out.println(numberOfReadyPlayers + " players ready");
                 socket.receive(packet);
                 buffer = packet.getData();
-                String data = new String(buffer);
+                String data = new String(packet.getData());
+                data = data.replaceAll("[^A-Za-z0-9]", ""); //remove all non aplhanumeric character
                 if(data.equals("ready")) {
                     numberOfReadyPlayers++;
                     break;

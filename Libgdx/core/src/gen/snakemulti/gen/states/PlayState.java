@@ -294,8 +294,8 @@ public class PlayState extends State {
                 byte[] buffer = new byte[1024];
                 DatagramPacket receivedPacket = new DatagramPacket(buffer, buffer.length);
                 clientSocket.receive(receivedPacket);
-                buffer = receivedPacket.getData();
-                String data = new String(buffer);
+                String data = new String(receivedPacket.getData());
+                data = data.replaceAll("[^A-Za-z0-9]", ""); //remove all non aplhanumeric character
                 if(data.equals("go")) {
                     break;
                 }
