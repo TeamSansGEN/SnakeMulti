@@ -84,7 +84,6 @@ public class MTSnakeServer {
             while (true) {
                 LOG.log(Level.INFO, "Waiting (blocking) for a new client on port {0}", portTCP);
                 try {
-
                     Socket clientSocket = serverSocket.accept();
                     LOG.info("A new client has arrived. Starting a new thread and delegating work to a new servant...");
                     new Thread(new ServantWorker(clientSocket)).start();
@@ -110,6 +109,9 @@ public class MTSnakeServer {
             public ServantWorker(Socket clientSocket) {
                 try {
                     this.clientSocket = clientSocket;
+
+                    //
+
                     in  = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                     out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
                 } catch (IOException ex) {

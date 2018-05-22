@@ -13,6 +13,8 @@ public class DesktopLauncher {
 		System.setProperty("java.util.logging.SimpleFormatter.format", "%5$s %n");
 
 		MTSnakeServer server = new MTSnakeServer(2828, 2829);
+
+
 		server.serveClients();
 
 	}

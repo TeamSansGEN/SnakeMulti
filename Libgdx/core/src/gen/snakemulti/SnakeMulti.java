@@ -37,7 +37,7 @@ public class SnakeMulti extends ApplicationAdapter {
 	public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        gsm.update(1/30);
+        gsm.update(1/60);
         gsm.render(batch);
 	}
 }

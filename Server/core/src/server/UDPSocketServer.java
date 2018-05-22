@@ -129,7 +129,7 @@ public class UDPSocketServer {
 
         // wait to receive 'ready' from all players
         // and send go when everyone is 'ready'.
-        receiveReadySendGo();
+        //receiveReadySendGo();
     }
 
     private void receiveReadySendGo() {
@@ -137,6 +137,7 @@ public class UDPSocketServer {
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
         while(true) {
+            System.out.println("still in loop");
             try {
                 System.out.println(numberOfReadyPlayers + " players ready");
                 socket.receive(packet);
@@ -145,6 +146,7 @@ public class UDPSocketServer {
                 data = data.replaceAll("[^A-Za-z0-9]", ""); //remove all non aplhanumeric character
                 if(data.equals("ready")) {
                     numberOfReadyPlayers++;
+                    System.out.println(numberOfReadyPlayers + " players ready");
                     break;
                 }
 
@@ -166,8 +168,5 @@ public class UDPSocketServer {
                 e.printStackTrace();
             }
         }
-
-
     }
-
 }

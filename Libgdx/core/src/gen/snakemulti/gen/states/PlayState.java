@@ -53,7 +53,7 @@ public class PlayState extends State {
         } catch (SocketException e) {
             e.printStackTrace();
         }
-        initGame();
+        //initGame();
     }
 
     private Snake getClientSnake(String username) {
