@@ -20,6 +20,9 @@ import java.util.Map;
 
 public class PlayState extends State {
 
+    private static String IP_SERVER   = "10.192.91.70";
+    private static int    PORT_SERVER = 2829;
+
     private Texture background;
 
     private int numberOfPlayers;
@@ -43,14 +46,14 @@ public class PlayState extends State {
         //position du snake doit être multiple de 4
         //snakes.add(new Snake(200, 400, Snake.RIGHT, "snake1.png", "joueur1", "10.192.91.230"));
         //snakes.add(new Snake(400, 200, Snake.LEFT, "snake2.png", "joueur2", "10.192.91.230"));
-        snake = getClientSnake("Jee");
+        snake = getClientSnake("Lio");
 
         try {
-            clientSocket = new DatagramSocket();
+            clientSocket = new DatagramSocket(PORT_SERVER);
         } catch (SocketException e) {
             e.printStackTrace();
         }
-        ;
+        //initGame();
     }
 
     private Snake getClientSnake(String username) {
@@ -166,7 +169,7 @@ public class PlayState extends State {
 
             sendData = bStream.toByteArray();
 
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("127.0.0.1"), 2829);
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(IP_SERVER), 2829);
             clientSocket.send(sendPacket);
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -202,12 +205,9 @@ public class PlayState extends State {
 
     public void sendUPD(Snake snake) {
 
-        String serverIP = "10.192.91.239";
-        int port = 2829;
 
         try {
 
-            InetAddress address = InetAddress.getByName(serverIP);
             DatagramSocket socket = new DatagramSocket();
 
             ByteArrayOutputStream bStream = new ByteArrayOutputStream();
@@ -217,7 +217,7 @@ public class PlayState extends State {
 
             byte[] buffer = bStream.toByteArray();
 
-            DatagramPacket request = new DatagramPacket(buffer, buffer.length, address, port);
+            DatagramPacket request = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(IP_SERVER), PORT_SERVER);
             socket.send(request);
             System.out.println("CLIENT => SERVER");
             socket.close();
@@ -264,5 +264,32 @@ public class PlayState extends State {
         }
     }
 
+    private void initGame() {
+        byte[] msg = "ready".getBytes();
+
+        try {
+            // Send 'ready' to the server
+            DatagramPacket packet = new DatagramPacket(msg, msg.length, InetAddress.getByName(IP_SERVER), PORT_SERVER);
+            clientSocket.send(packet);
+
+            // Wait for 'go' from server
+            while(true) {
+                byte[] buffer = new byte[1024];
+                DatagramPacket receivedPacket = new DatagramPacket(buffer, buffer.length);
+                clientSocket.receive(receivedPacket);
+                String data = new String(receivedPacket.getData());
+                data = data.replaceAll("[^A-Za-z0-9]", ""); //remove all non aplhanumeric character
+                if(data.equals("go")) {
+                    break;
+                }
+            }
+            clientSocket.close();
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
