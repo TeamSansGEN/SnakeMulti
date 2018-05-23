@@ -73,6 +73,35 @@ public class Snake implements Serializable {
         alive = false;
     }
 
+    public void addNewHead() {
+        float newX = 0;
+        float newY = 0;
+
+        if(direction.equals(UP)) {
+            newX = headPosition.x;
+            newY = headPosition.y + BODY_SIZE;
+        }
+        else if(direction.equals(LEFT)) {
+            newX = headPosition.x - BODY_SIZE;
+            newY = headPosition.y;
+        }
+        else if(direction.equals(DOWN)) {
+            newX = headPosition.x;
+            newY = headPosition.y - BODY_SIZE;
+        }
+        else if(direction.equals(RIGHT)) {
+            newX = headPosition.x + BODY_SIZE;
+            newY = headPosition.y;
+        }
+
+        Vector2 newBodyPart = new Vector2(newX, newY);
+        bodyParts.add(0, newBodyPart);
+        bodyParts.remove(bodyParts.size() - 1);
+
+        headPosition = newBodyPart;
+        tailPosition = bodyParts.get(bodyParts.size() - 1);
+    }
+
     public void addBodyPart() {
 
         float newX = 0;
@@ -101,9 +130,13 @@ public class Snake implements Serializable {
     }
 
     public void moveSnake() {
-        for(int i = bodyParts.size()-1; i > 0; i--) {
+        /*for(int i = bodyParts.size()-1; i > 0; i--) {
             bodyParts.set(i, new Vector2(bodyParts.get(i-1).x, bodyParts.get(i-1).y));
-        }
+        }*/
+
+        addNewHead();
+
+
 
     }
 
@@ -156,7 +189,7 @@ public class Snake implements Serializable {
     public void update(float dt) {
         if(alive) {
             moveSnake();
-            moveSnakeHead(dt);
+            //moveSnakeHead(dt);
 
             if (headPosition.x >= SnakeMulti.WIDTH) {
                 headPosition.x = 0;

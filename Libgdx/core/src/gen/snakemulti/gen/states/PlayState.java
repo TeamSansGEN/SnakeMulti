@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class PlayState extends State {
 
-    private static String IP_SERVER   = "10.192.91.239";
+    private static String IP_SERVER   = "10.192.91.70";
     private static int    PORT_SERVER = 2829;
 
     private Texture background;
