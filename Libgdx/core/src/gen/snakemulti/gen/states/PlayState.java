@@ -47,7 +47,7 @@ public class PlayState extends State {
         //snakes = new ArrayList<Snake>();
         players = new HashMap<String, Snake>();
         players.put("Jee", new Snake( 50, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
-        players.put("Jee", new Snake( 900, 600, Snake.LEFT, "Lio", "127.0.0.1"));
+        players.put("Lio", new Snake( 900, 600, Snake.LEFT, "Lio", "127.0.0.1"));
 
         //TESTS ENLEVER DES TRUC DE RENDER
 
@@ -178,7 +178,7 @@ public class PlayState extends State {
         }*/
         //int playerNumber = 1;
         for(Snake s : players.values()) {
-            for(int i = 0; i < snake.getSize(); i++) {
+            for(int i = 0; i < s.getSize(); i++) {
 
                 sb.draw(texture, s.getBodyParts().get(i).x, s.getBodyParts().get(i).y);
             }
