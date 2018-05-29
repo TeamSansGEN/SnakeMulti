@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class PlayState extends State {
 
-    private static String IP_SERVER   = "10.192.91.70";
+    private static String IP_SERVER   = "192.168.0.45";
     private static int    PORT_SERVER = 2829;
 
     private Texture background;
@@ -33,6 +33,11 @@ public class PlayState extends State {
 
     private Map<String, Snake> players;
 
+    //TESTS ENLEVER DES TRUC DE RENDER
+    String textureName = "snake" + 1 + ".png";
+    Texture texture = new Texture(textureName);
+    ///////////
+
     //private List<Snake> snakes;
 
     public PlayState(GameStateManager gsm, int numberOfPlayers) {
@@ -42,7 +47,13 @@ public class PlayState extends State {
         //snakes = new ArrayList<Snake>();
         players = new HashMap<String, Snake>();
         players.put("Jee", new Snake( 50, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
-        players.put("Lio", new Snake(900, 600,  Snake.DOWN, "Lio", "127.0.0.1"));
+        players.put("Jee", new Snake( 900, 600, Snake.LEFT, "Lio", "127.0.0.1"));
+
+        //TESTS ENLEVER DES TRUC DE RENDER
+
+        ////////
+
+        //players.put("Lio", new Snake(900, 600,  Snake.DOWN, "Lio", "127.0.0.1"));
         //position du snake doit être multiple de 4
         //snakes.add(new Snake(200, 400, Snake.RIGHT, "snake1.png", "joueur1", "10.192.91.230"));
         //snakes.add(new Snake(400, 200, Snake.LEFT, "snake2.png", "joueur2", "10.192.91.230"));
@@ -115,7 +126,8 @@ public class PlayState extends State {
     public void update(float dt) {
         handleInput();
 
-        snake.update(dt);
+        //snake.update(dt);
+        snake.moveSnake();
         //snakes.get(1).update(dt);
 
         /*if (snakes.get(0).collides(snakes.get(1))) {
@@ -126,6 +138,22 @@ public class PlayState extends State {
             snakes.get(1).kill();
         }*/
 
+        /*Thread sendAndReceivePosition = new Thread() {
+            public void run() {
+
+                while(true) {
+                    if (snake.isAlive()) {
+                        //sendUPD(snakes.get(0));
+                        sendPosition(snake);
+                    }
+
+                    //receivUPD(2829);
+                    players = receivePosition();
+                }
+            }
+        };
+        sendAndReceivePosition.start();*/
+
         if (snake.isAlive()) {
             //sendUPD(snakes.get(0));
             sendPosition(snake);
@@ -133,6 +161,8 @@ public class PlayState extends State {
 
         //receivUPD(2829);
         players = receivePosition();
+
+
     }
 
     @Override
@@ -140,13 +170,19 @@ public class PlayState extends State {
         sb.begin();
         sb.draw(background, 0, 0, SnakeMulti.WIDTH, SnakeMulti.HEIGHT);
 
-        int playerNumber = 1;
+        /*for (int i = 0; i < snake.getSize(); i++) {
+            sb.draw(snake.getTexture().get(i), snake.getBodyParts().get(i).x, snake.getBodyParts().get(i).y);
+        }
+        for (int i = 0; i < snakes.get(1).getSize(); i++) {
+            sb.draw(snakes.get(1).getTexture().get(i), snakes.get(1).getBodyParts().get(i).x, snakes.get(1).getBodyParts().get(i).y);
+        }*/
+        //int playerNumber = 1;
         for(Snake s : players.values()) {
             for(int i = 0; i < snake.getSize(); i++) {
-                String textureName = "snake" + playerNumber + ".png";
-                sb.draw(new Texture(textureName), s.getBodyParts().get(i).x, s.getBodyParts().get(i).y);
+
+                sb.draw(texture, s.getBodyParts().get(i).x, s.getBodyParts().get(i).y);
             }
-            playerNumber++;
+            //playerNumber++;
         }
 
         sb.end();
