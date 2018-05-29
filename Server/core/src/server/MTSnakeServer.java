@@ -10,6 +10,8 @@ import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.DatagramPacket;
@@ -22,11 +24,15 @@ import java.net.DatagramPacket;
  * @author Lionel Burgbacher
  */
 public class MTSnakeServer {
-
+    final static int NUMBER_OF_PLAYERS = 4;
     final static Logger LOG = Logger.getLogger(MTSnakeServer.class.getName());
 
     int portUDP;
     int portTCP;
+
+    static List<String> players;
+
+    boolean gameStarted;
 
     /**
      * Constructor
@@ -37,6 +43,9 @@ public class MTSnakeServer {
     public MTSnakeServer(int portTCP, int portUDP) {
         this.portTCP = portTCP;
         this.portUDP = portUDP;
+
+        players = new ArrayList<String>();
+        gameStarted = false;
     }
 
     /**
@@ -52,12 +61,13 @@ public class MTSnakeServer {
         new Thread(new UDPWorker()).start();
     }
 
-    private class UDPWorker implements Runnable{
+    private class UDPWorker implements Runnable {
 
         public void run() {
 
             UDPSocketServer s = new UDPSocketServer("127.0.0.1", portUDP);
             s.initGame(new String[]{"Jee", "Lio"});
+            //s.initGame(new String[]{"Jee"});
             s.listen();
         }
     }
@@ -110,9 +120,7 @@ public class MTSnakeServer {
                 try {
                     this.clientSocket = clientSocket;
 
-                    //
-
-                    in  = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                    in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                     out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
                 } catch (IOException ex) {
                     Logger.getLogger(MTSnakeServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -124,62 +132,72 @@ public class MTSnakeServer {
                 out.println("Welcome to the Multi-Snake Server.\n");
                 out.flush();
 
-                try {
-                    LOG.info("Reading the client choice");
-                    if((line = in.readLine()) != null) {
+                while (true) {
+                    try {
+                        LOG.info("Reading the client choice");
 
-                        if(line.equalsIgnoreCase("HELLO")){
+                        if ((line = in.readLine()) != null) {
 
+                            if (line.equalsIgnoreCase(Protocol.CMD_HELLO)) {
+
+                            } else if (line.equalsIgnoreCase(Protocol.CMD_HELP)) {
+
+                                //TODO
+                            } else if (line.equalsIgnoreCase(Protocol.CMD_START)) {
+                                //Start a game, waiting for players
+                                if (!gameStarted) {
+                                    String playerName = in.readLine();
+                                    players.add(playerName);
+                                } else {
+                                    out.println("game already in progress");
+                                    out.flush();
+                                }
+
+                            } else if (line.equalsIgnoreCase(Protocol.CMD_END)) {
+                                //Quit the game
+                                //TODO
+                            } else if (line.equalsIgnoreCase(Protocol.CMD_UPDATE)) {
+
+                                //TODO
+                            } else if (line.equalsIgnoreCase(Protocol.CMD_LOGIN)) {
+
+                                //TODO
+                            } else if (line.equalsIgnoreCase(Protocol.CMD_LEADERBOARD)) {
+                                //Shows leaderboard
+                                //TODO
+                            }
+                            out.flush();
                         }
-                        else if(line.equalsIgnoreCase("HELP")){
 
-                            //TODO
-                        }
-                        else if(line.equalsIgnoreCase("START")){
-
-                            //TODO
-                        }
-                        else if(line.equalsIgnoreCase("END")){
-
-                            //TODO
-                        }
-                        else if(line.equalsIgnoreCase("UPDATE")){
-
-                            //TODO
-                        }
-                        else if(line.equalsIgnoreCase("LOGIN")){
-
-                            //TODO
-                        }
-                        out.flush();
-                    }
-
-                    LOG.info("Cleaning up resources...");
-                    clientSocket.close();
-                    in.close();
-                    out.close();
-
-                } catch (IOException ex) {
-                    if (in != null) {
-                        try {
-                            in.close();
-                        } catch (IOException ex1) {
-                            LOG.log(Level.SEVERE, ex1.getMessage(), ex1);
-                        }
-                    }
-                    if (out != null) {
+                        LOG.info("Cleaning up resources...");
+                        clientSocket.close();
+                        in.close();
                         out.close();
-                    }
-                    if (clientSocket != null) {
-                        try {
-                            clientSocket.close();
-                        } catch (IOException ex1) {
-                            LOG.log(Level.SEVERE, ex1.getMessage(), ex1);
+
+                    } catch (IOException ex) {
+                        if (in != null) {
+                            try {
+                                in.close();
+                            } catch (IOException ex1) {
+                                LOG.log(Level.SEVERE, ex1.getMessage(), ex1);
+                            }
                         }
+                        if (out != null) {
+                            out.close();
+                        }
+                        if (clientSocket != null) {
+                            try {
+                                clientSocket.close();
+                            } catch (IOException ex1) {
+                                LOG.log(Level.SEVERE, ex1.getMessage(), ex1);
+                            }
+                        }
+                        LOG.log(Level.SEVERE, ex.getMessage(), ex);
                     }
-                    LOG.log(Level.SEVERE, ex.getMessage(), ex);
                 }
             }
+
+
         }
     }
 }

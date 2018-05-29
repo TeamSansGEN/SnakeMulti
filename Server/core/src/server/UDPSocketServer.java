@@ -56,11 +56,10 @@ public class UDPSocketServer {
 
                 Snake snake = (Snake) is.readObject();
 
-                //System.out.println("Data received => position("+snake.getHeadPosition().x
-                //                    +","+snake.getHeadPosition().y+")");
-
-
+                // update the snake Object of the player
                 players.put(snake.getName(), snake);
+
+                System.out.println(snake.getName() + ": ("+snake.getHeadPosition().x+", "+snake.getHeadPosition().y+")");
 
                 ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
                 ObjectOutputStream out = new ObjectOutputStream(byteOut);
@@ -68,6 +67,8 @@ public class UDPSocketServer {
                 bufferSend = byteOut.toByteArray();
 
                 sendPacket = new DatagramPacket(bufferSend, bufferSend.length, packet.getAddress(), packet.getPort());
+
+                //Thread.sleep(16);
                 socket.send(sendPacket);
 
                 //if(validateSnakePosition(snake.getHeadPosition(), previousPosition)) {
@@ -78,8 +79,6 @@ public class UDPSocketServer {
                 else {
                     //snakesPositions = new byte[]{'0'};
                 }
-
-
 
 
             } catch (IOException e) {
@@ -121,7 +120,6 @@ public class UDPSocketServer {
             int initX = INITIAL_POSITIONS[i][0];
             int initY = INITIAL_POSITIONS[i][1];
             String initDirection = Snake.DIRECTIONS[1];
-            String textureName = "snake"+ (i+1) + ".png";
 
             Snake s = new Snake(initX, initY, initDirection, playersList[i], "127.0.0.1");
             players.put(playersList[i], s);
