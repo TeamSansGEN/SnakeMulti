@@ -94,12 +94,39 @@ public class Snake implements Serializable {
             newY = headPosition.y;
         }
 
+
+        if (newX >= SnakeMulti.WIDTH) {
+            newX = 0;
+        }
+
+        if (newX < 0) {
+            newX = SnakeMulti.WIDTH;
+        }
+
+        if (newY >= SnakeMulti.HEIGHT) {
+            newY = 0;
+        }
+
+        if (newY < 0) {
+            newY = SnakeMulti.HEIGHT;
+        }
+
+
         Vector2 newBodyPart = new Vector2(newX, newY);
         bodyParts.add(0, newBodyPart);
         bodyParts.remove(bodyParts.size() - 1);
 
         headPosition = newBodyPart;
         tailPosition = bodyParts.get(bodyParts.size() - 1);
+    }
+
+    public void addTail(){
+
+        for (int i = 0; i < 10 ; i++) {
+
+            addBodyPart();
+        }
+        size += 10;
     }
 
     public void addBodyPart() {
@@ -135,9 +162,6 @@ public class Snake implements Serializable {
         }*/
 
         addNewHead();
-
-
-
     }
 
     public boolean collides() {
@@ -145,7 +169,6 @@ public class Snake implements Serializable {
             //System.out.println("Collision: ");
             //System.out.println("head("+headPosition.x+","+headPosition.y+")  body("+bodyParts.get(i).x+","+bodyParts.get(i).y+")");
             if (headPosition.x == bodyParts.get(i).x && headPosition.y == bodyParts.get(i).y) {
-
                 return true;
             }
         }
@@ -186,10 +209,9 @@ public class Snake implements Serializable {
         }
     }
 
-    public void update(float dt) {
+    public void updatePOS() {
+
         if(alive) {
-            moveSnake();
-            //moveSnakeHead(dt);
 
             if (headPosition.x >= SnakeMulti.WIDTH) {
                 headPosition.x = 0;
