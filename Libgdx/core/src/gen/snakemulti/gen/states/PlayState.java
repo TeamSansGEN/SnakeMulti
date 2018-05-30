@@ -149,7 +149,9 @@ public class PlayState extends State {
         }
         System.out.println("Snake STATE = " + snake.isAlive());
         //snakes.get(1).update(dt);
-
+        if(snake.collides()) {
+            snake.kill();
+        }
         /*if (snakes.get(0).collides(snakes.get(1))) {
             snakes.get(0).kill();
         }
@@ -174,11 +176,11 @@ public class PlayState extends State {
         };
         sendAndReceivePosition.start();*/
 
-        if (snake.isAlive()) {
+
             //sendUPD(snakes.get(0));
             //System.out.println("send");
-            sendPosition(snake);
-        }
+        sendPosition(snake);
+
 
         //receivUPD(2829);
         players = receivePosition();
