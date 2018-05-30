@@ -94,6 +94,19 @@ public class Snake implements Serializable {
             newY = headPosition.y;
         }
 
+        if(newY >= SnakeMulti.HEIGHT) {
+            newY = 0;
+        }
+        if(newX >= SnakeMulti.WIDTH) {
+            newX = 0;
+        }
+        if(newX < 0) {
+            newX = SnakeMulti.WIDTH;
+        }
+        if(newY < 0) {
+            newY = SnakeMulti.HEIGHT;
+        }
+
         Vector2 newBodyPart = new Vector2(newX, newY);
         bodyParts.add(0, newBodyPart);
         bodyParts.remove(bodyParts.size() - 1);
@@ -184,6 +197,11 @@ public class Snake implements Serializable {
             headPosition.x += 4;
             //headPosition.x += Gdx.graphics.getDeltaTime() * speed;
         }
+    }
+
+    public void setHeadPosition(Vector2 pos) {
+        headPosition.x = pos.x;
+        headPosition.y = pos.y;
     }
 
     public void update(float dt) {
