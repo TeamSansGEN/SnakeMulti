@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 import gen.snakemulti.SnakeMulti;
+import gen.snakemulti.sprites.Apple;
 import gen.snakemulti.sprites.Snake;
 
 import javax.xml.crypto.Data;
@@ -18,10 +20,12 @@ import java.util.List;
 import java.net.DatagramPacket;
 import java.util.Map;
 
+
 public class PlayState extends State {
 
-    private static String IP_SERVER   = "192.168.0.45";
-    private static int    PORT_SERVER = 2829;
+    //private static String IP_SERVER   = "10.192.91.133";
+    private static String IP_SERVER   = "10.192.95.72";
+    private static int    PORT_SERVER = 2828;
 
     private Texture background;
 
@@ -31,11 +35,17 @@ public class PlayState extends State {
 
     private Snake snake;
 
+    private boolean isEat = true;
+    private Apple apple;
+
     private Map<String, Snake> players;
+
 
     //TESTS ENLEVER DES TRUC DE RENDER
     String textureName = "snake" + 1 + ".png";
     Texture texture = new Texture(textureName);
+    String textureNameApple = "apple.png";
+    Texture textureApple = new Texture("apple.png");
     ///////////
 
     //private List<Snake> snakes;
@@ -46,8 +56,10 @@ public class PlayState extends State {
         background = new Texture("backgroundLobby.png");
         //snakes = new ArrayList<Snake>();
         players = new HashMap<String, Snake>();
-        players.put("Jee", new Snake( 50, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
-        players.put("Lio", new Snake( 900, 600, Snake.LEFT, "Lio", "127.0.0.1"));
+        players.put("Jee", new Snake( 48, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
+        players.put("Lio", new Snake( 800, 600, Snake.LEFT, "Lio", "127.0.0.1"));
+
+        apple = new Apple();
 
         //TESTS ENLEVER DES TRUC DE RENDER
 
@@ -156,19 +168,55 @@ public class PlayState extends State {
 
         if (snake.isAlive()) {
             //sendUPD(snakes.get(0));
+            System.out.println("send");
             sendPosition(snake);
         }
 
         //receivUPD(2829);
         players = receivePosition();
+        System.out.println("receiv");
 
 
+    }
+
+    ////////////////////////
+    ////////////////////////
+    ////////////////////////
+
+
+    private int appX;
+    private int appY;
+
+
+    public void changeBool(){
+
+        isEat = true;
+    }
+
+    public void eatApple(int x, int y){
+
+        if(snake.getHeadPosition().x - x <= textureApple.getWidth() && snake.getHeadPosition().y - y <= textureApple.getHeight() &&
+                snake.getHeadPosition().x - x >= 0  && snake.getHeadPosition().y - y >= 0){
+            isEat = true;
+        }
     }
 
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
         sb.draw(background, 0, 0, SnakeMulti.WIDTH, SnakeMulti.HEIGHT);
+
+        eatApple(appX, appY);
+
+        if(isEat) {
+            snake.addTail();
+            isEat= false;
+            appX = apple.randomX();
+            appY = apple.randomY();
+        }
+
+        sb.draw(textureApple, appX, appY);
+
 
         /*for (int i = 0; i < snake.getSize(); i++) {
             sb.draw(snake.getTexture().get(i), snake.getBodyParts().get(i).x, snake.getBodyParts().get(i).y);
@@ -219,11 +267,46 @@ public class PlayState extends State {
         Map<String, Snake> positions = null;
         try {
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
+            /*
+            try {
+                clientSocket.receive(receivePacket);
+            }
+            catch(IOException e) {
+                continue;
+            }
+            */
+
             clientSocket.receive(receivePacket);
+            /*
+            while (true) {
+                try {
+                    System.out.println("receivData");
+                    System.out.println(receivePacket.getData());
+                    for (byte b: receivePacket.getData()) {
+                        System.out.print(b);
+                    }
+                    System.out.println();
+
+                    clientSocket.receive(receivePacket);
+                    break;
+                }
+                catch(IOException e) {
+                    System.out.println("continueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                    continue;
+                }
+            }
+            */
+
+
+            //clientSocket.receive(receivePacket);
             //System.out.println(new String(receivePacket.getData()));
 
+            System.out.println("bis");
             ByteArrayInputStream bis = new ByteArrayInputStream(receiveData);
+            System.out.println("in");
             ObjectInputStream in = new ObjectInputStream(bis);
+            System.out.println("position");
             positions = (Map<String, Snake>) in.readObject();
 
         } catch (IOException e) {
@@ -278,8 +361,10 @@ public class PlayState extends State {
 
             while (true) {
 
+                int SIZE_BUFFER = 16384;
+
                 //On s'occupe maintenant de l'objet paquet
-                byte[] buffer = new byte[8192];
+                byte[] buffer = new byte[SIZE_BUFFER];
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
                 //Cette méthode permet de récupérer le datagramme envoyé par le client
