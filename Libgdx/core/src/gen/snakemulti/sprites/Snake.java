@@ -156,8 +156,9 @@ public class Snake implements Serializable {
         /*for(int i = bodyParts.size()-1; i > 0; i--) {
             bodyParts.set(i, new Vector2(bodyParts.get(i-1).x, bodyParts.get(i-1).y));
         }*/
-
-        addNewHead();
+        if(isAlive()) {
+            addNewHead();
+        }
     }
 
     public boolean collides() {

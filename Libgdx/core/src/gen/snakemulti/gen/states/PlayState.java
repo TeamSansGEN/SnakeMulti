@@ -25,7 +25,7 @@ public class PlayState extends State {
 
 
     private static String IP_SERVER   = "10.192.91.133";//"192.168.0.45";
-    private static int    PORT_SERVER = 2829;
+    private static int    PORT_SERVER = 2830;
 
     private String clientName;
     private Texture background;
@@ -143,7 +143,10 @@ public class PlayState extends State {
         handleInput();
 
         //snake.update(dt);
-        snake.moveSnake();
+        if(snake.isAlive()) {
+            snake.moveSnake();
+        }
+        System.out.println("Snake STATE = " + snake.isAlive());
         //snakes.get(1).update(dt);
 
         /*if (snakes.get(0).collides(snakes.get(1))) {
@@ -172,13 +175,13 @@ public class PlayState extends State {
 
         if (snake.isAlive()) {
             //sendUPD(snakes.get(0));
-            System.out.println("send");
+            //System.out.println("send");
             sendPosition(snake);
         }
 
         //receivUPD(2829);
         players = receivePosition();
-        snake.setHeadPosition(players.get(clientName).getHeadPosition());
+        snake = players.get(clientName);
 
     }
 
@@ -305,11 +308,11 @@ public class PlayState extends State {
             //clientSocket.receive(receivePacket);
             //System.out.println(new String(receivePacket.getData()));
 
-            System.out.println("bis");
+            //System.out.println("bis");
             ByteArrayInputStream bis = new ByteArrayInputStream(receiveData);
-            System.out.println("in");
+            //System.out.println("in");
             ObjectInputStream in = new ObjectInputStream(bis);
-            System.out.println("position");
+            //System.out.println("position");
             positions = (Map<String, Snake>) in.readObject();
 
         } catch (IOException e) {
