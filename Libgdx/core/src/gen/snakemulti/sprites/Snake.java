@@ -95,22 +95,18 @@ public class Snake implements Serializable {
         }
 
 
-        if (newX >= SnakeMulti.WIDTH) {
-            newX = 0;
-        }
-
-        if (newX < 0) {
-            newX = SnakeMulti.WIDTH;
-        }
-
-        if (newY >= SnakeMulti.HEIGHT) {
+        if(newY >= SnakeMulti.HEIGHT) {
             newY = 0;
         }
-
-        if (newY < 0) {
+        if(newX >= SnakeMulti.WIDTH) {
+            newX = 0;
+        }
+        if(newX < 0) {
+            newX = SnakeMulti.WIDTH;
+        }
+        if(newY < 0) {
             newY = SnakeMulti.HEIGHT;
         }
-
 
         Vector2 newBodyPart = new Vector2(newX, newY);
         bodyParts.add(0, newBodyPart);
@@ -209,8 +205,13 @@ public class Snake implements Serializable {
         }
     }
 
-    public void updatePOS() {
 
+    public void setHeadPosition(Vector2 pos) {
+        headPosition.x = pos.x;
+        headPosition.y = pos.y;
+    }
+
+    public void update(float dt) {
         if(alive) {
 
             if (headPosition.x >= SnakeMulti.WIDTH) {

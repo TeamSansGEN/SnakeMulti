@@ -23,10 +23,11 @@ import java.util.Map;
 
 public class PlayState extends State {
 
-    //private static String IP_SERVER   = "10.192.91.133";
-    private static String IP_SERVER   = "10.192.95.72";
-    private static int    PORT_SERVER = 2828;
 
+    private static String IP_SERVER   = "10.192.91.133";//"192.168.0.45";
+    private static int    PORT_SERVER = 2829;
+
+    private String clientName;
     private Texture background;
 
     private int numberOfPlayers;
@@ -56,10 +57,12 @@ public class PlayState extends State {
         background = new Texture("backgroundLobby.png");
         //snakes = new ArrayList<Snake>();
         players = new HashMap<String, Snake>();
-        players.put("Jee", new Snake( 48, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
-        players.put("Lio", new Snake( 800, 600, Snake.LEFT, "Lio", "127.0.0.1"));
 
         apple = new Apple();
+
+        clientName = "Jee";
+        players.put("Jee", new Snake(48, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
+        players.put("Lio", new Snake(800, 600, Snake.LEFT, "Lio", "127.0.0.1"));
 
         //TESTS ENLEVER DES TRUC DE RENDER
 
@@ -69,7 +72,8 @@ public class PlayState extends State {
         //position du snake doit être multiple de 4
         //snakes.add(new Snake(200, 400, Snake.RIGHT, "snake1.png", "joueur1", "10.192.91.230"));
         //snakes.add(new Snake(400, 200, Snake.LEFT, "snake2.png", "joueur2", "10.192.91.230"));
-        snake = getClientSnake("Lio");
+
+        snake = getClientSnake(clientName);
 
         try {
             clientSocket = new DatagramSocket(PORT_SERVER);
@@ -174,8 +178,7 @@ public class PlayState extends State {
 
         //receivUPD(2829);
         players = receivePosition();
-        System.out.println("receiv");
-
+        snake.setHeadPosition(players.get(clientName).getHeadPosition());
 
     }
 
@@ -186,7 +189,7 @@ public class PlayState extends State {
 
     private int appX;
     private int appY;
-
+    
 
     public void changeBool(){
 
