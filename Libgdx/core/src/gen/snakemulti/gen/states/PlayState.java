@@ -45,8 +45,8 @@ public class PlayState extends State {
     //TESTS ENLEVER DES TRUC DE RENDER
     String textureName = "snake" + 1 + ".png";
     Texture texture = new Texture(textureName);
-    String textureNameApple = "apple.png";
-    Texture textureApple = new Texture("apple.png");
+    String textureNameApple = "apple16.png";
+    Texture textureApple = new Texture(textureNameApple);
     ///////////
 
     //private List<Snake> snakes;
@@ -189,7 +189,7 @@ public class PlayState extends State {
 
     private int appX;
     private int appY;
-    
+
 
     public void changeBool(){
 
@@ -218,7 +218,7 @@ public class PlayState extends State {
             appY = apple.randomY();
         }
 
-        sb.draw(textureApple, appX, appY);
+        //sb.draw(textureApple, appX, appY);
 
 
         /*for (int i = 0; i < snake.getSize(); i++) {
