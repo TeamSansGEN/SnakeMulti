@@ -48,8 +48,8 @@ public class PlayState extends State {
         //snakes = new ArrayList<Snake>();
         players = new HashMap<String, Snake>();
         clientName = "Jee";
-        players.put("Jee", new Snake( 48, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
-        players.put("Lio", new Snake( 800, 600, Snake.LEFT, "Lio", "127.0.0.1"));
+        players.put("Jee", new Snake(48, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
+        players.put("Lio", new Snake(800, 600, Snake.LEFT, "Lio", "127.0.0.1"));
 
         //TESTS ENLEVER DES TRUC DE RENDER
 
