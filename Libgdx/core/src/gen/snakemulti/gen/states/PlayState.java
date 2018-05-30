@@ -24,7 +24,8 @@ import java.util.Map;
 public class PlayState extends State {
 
 
-    private static String IP_SERVER   = "10.192.91.133";//"192.168.0.45";
+    //private static String IP_SERVER   = "10.192.95.72";
+    private static String IP_SERVER   = "10.192.91.133";
     private static int    PORT_SERVER = 2830;
 
     private String clientName;
@@ -60,7 +61,7 @@ public class PlayState extends State {
 
         apple = new Apple();
 
-        clientName = "Jee";
+        clientName = "Lio";
         players.put("Jee", new Snake(48, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
         players.put("Lio", new Snake(800, 600, Snake.LEFT, "Lio", "127.0.0.1"));
 
