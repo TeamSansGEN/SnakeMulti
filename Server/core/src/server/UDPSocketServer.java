@@ -19,10 +19,10 @@ public class UDPSocketServer {
     private InetAddress ipAddress;
     private static Map<String, Snake> players; // <username, snake>
     private int numberOfPlayers;
-
+    private Game game;
     private static int numberOfReadyPlayers = 0;
 
-    private static final int[][] INITIAL_POSITIONS = {{50, 600}, {900, 600}, {900, 40}, {50, 40}};
+    private static final int[][] INITIAL_POSITIONS = {{48, 600}, {800, 600}, {800, 40}, {48, 40}};
 
     public UDPSocketServer(String ipAddress, int port) {
 
@@ -58,8 +58,13 @@ public class UDPSocketServer {
 
                 // update the snake Object of the player
                 players.put(snake.getName(), snake);
+                System.out.println(snake.getName() + "(head): "+snake.getHeadPosition().x+", "+snake.getHeadPosition().y+")");
+                String deadPlayer = game.checkCollides(players);
+                if(!deadPlayer.equals("")) {
+                    players.get(deadPlayer).kill();
+                }
 
-                System.out.println(snake.getName() + ": ("+snake.getHeadPosition().x+", "+snake.getHeadPosition().y+")");
+                //System.out.println(snake.getName() + ": ("+snake.getHeadPosition().x+", "+snake.getHeadPosition().y+")");
 
                 ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
                 ObjectOutputStream out = new ObjectOutputStream(byteOut);
@@ -124,6 +129,8 @@ public class UDPSocketServer {
             Snake s = new Snake(initX, initY, initDirection, playersList[i], "127.0.0.1");
             players.put(playersList[i], s);
         }
+
+        game = new Game(players);
 
         // wait to receive 'ready' from all players
         // and send go when everyone is 'ready'.

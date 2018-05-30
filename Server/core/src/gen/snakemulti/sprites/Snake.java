@@ -116,10 +116,24 @@ public class Snake implements Serializable {
         return false;
     }
 
+    public boolean collides(Snake s1, Snake s2) {
+        // TODO: check head
+        for(int i = 0; i < s2.getBodyParts().size(); i++) {
+            //System.out.println("head("+s1.getHeadPosition().x+","+s1.getHeadPosition().y+")  otherBody("+s2.getBodyParts().get(i).x+","+s2.getBodyParts().get(i).y+")");
+            if(s1.getHeadPosition().x == s2.getBodyParts().get(i).x && s1.getHeadPosition().y == s2.getBodyParts().get(i).y) {
+                System.out.println("\n\n\nCOLLISION!!!\n\n\n");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean collides(Snake otherSnake) {
         for(int i = 0; i < otherSnake.getBodyParts().size(); i++) {
-            //System.out.println("head("+headPosition.x+","+headPosition.y+")  body("+otherSnake.getBodyParts().get(i).x+","+otherSnake.getBodyParts().get(i).y+")");
+            System.out.println("head("+headPosition.x+","+headPosition.y+")  otherBody("+otherSnake.getBodyParts().get(i).x+","+otherSnake.getBodyParts().get(i).y+")");
             if(headPosition.x == otherSnake.getBodyParts().get(i).x && headPosition.y == otherSnake.getBodyParts().get(i).y) {
+                System.out.println("\n\n\nCOLLISION!!!\n\n\n");
                 return true;
             }
         }
