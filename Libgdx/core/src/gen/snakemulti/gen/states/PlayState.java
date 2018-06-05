@@ -20,12 +20,15 @@ import java.util.List;
 import java.net.DatagramPacket;
 import java.util.Map;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class PlayState extends State {
 
 
     //private static String IP_SERVER   = "10.192.95.72";
-    private static String IP_SERVER   = "10.192.91.133";
+    private static String IP_SERVER   = "192.168.43.30";
     private static int    PORT_SERVER = 2830;
 
     private String clientName;
@@ -38,7 +41,7 @@ public class PlayState extends State {
     private Snake snake;
 
     private boolean isEat = true;
-    private Apple apple;
+    private Apple apple1;
 
     private Map<String, Snake> players;
 
@@ -59,7 +62,7 @@ public class PlayState extends State {
         //snakes = new ArrayList<Snake>();
         players = new HashMap<String, Snake>();
 
-        apple = new Apple();
+        apple1 = new Apple();
 
         clientName = "Lio";
         players.put("Jee", new Snake(48, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
@@ -193,8 +196,8 @@ public class PlayState extends State {
     ////////////////////////
 
 
-    private int appX;
-    private int appY;
+    private int app1X;
+    private int app1Y;
 
 
     public void changeBool(){
@@ -210,21 +213,37 @@ public class PlayState extends State {
         }
     }
 
+    public void randomTimeApple(){
+
+
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                public void run() {
+                    app1X = apple1.randomX();
+                    app1Y = apple1.randomY();
+                }
+            }, 0, 10000);
+
+            //timer.
+    }
+
+
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
         sb.draw(background, 0, 0, SnakeMulti.WIDTH, SnakeMulti.HEIGHT);
 
-        eatApple(appX, appY);
+        eatApple(app1X, app1Y);
+
 
         if(isEat) {
             snake.addTail();
             isEat= false;
-            appX = apple.randomX();
-            appY = apple.randomY();
+            randomTimeApple();
         }
 
-        //sb.draw(textureApple, appX, appY);
+
+        sb.draw(textureApple, app1X, app1Y);
 
 
         /*for (int i = 0; i < snake.getSize(); i++) {
