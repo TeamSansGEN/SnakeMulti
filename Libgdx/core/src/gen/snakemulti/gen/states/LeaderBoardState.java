@@ -13,45 +13,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import gen.snakemulti.SnakeMulti;
+import gen.snakemulti.*;
 
-import java.net.Socket;
-
-public class LobbyState extends State {
+public class LeaderBoardState extends State {
 
     private Texture background;
-    private ImageButton readyButton;
-
-    private Socket socket;
-    private int playerConnected = 0;
-    private final int NUMBER_OF_PLAYERS = 2;
+    private Texture test;
 
 
-    public LobbyState(GameStateManager gsm) {
+    public LeaderBoardState(GameStateManager gsm) {
         super(gsm);
         background  = new Texture("backgroundLobby.png");
 
-        Texture playTexture = new Texture("readyButton.png");
-        Drawable drawable = new TextureRegionDrawable(new TextureRegion(playTexture));
-        readyButton = new ImageButton(drawable);
-        readyButton.setPosition(400,300);
-
-        Stage stage= new Stage();
-        Gdx.input.setInputProcessor(stage);
-        stage.addActor(readyButton);
-
-        readyButton.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y){
-                goToPlayState();
-            }
-        });
-
-    }
-
-    public void goToPlayState(){
-        playerConnected++;
-        while(playerConnected < NUMBER_OF_PLAYERS)
-        {}
-        gsm.set(new PlayState(gsm,1));
     }
 
     @Override
@@ -64,16 +37,28 @@ public class LobbyState extends State {
         handleInput(); //will always be checking for inputs
     }
 
+
+
+    BitmapFont font = new BitmapFont();
+
     @Override
     public void render(SpriteBatch sb) {
 
+        ConnexionSQL sql = new ConnexionSQL();
+
+
+       // int score = sql.recupScore(1);
+
         sb.begin(); //open the box
 
-        //put everything to be rendered inside the box
+
+
         sb.draw(background,  0, 0, SnakeMulti.WIDTH, SnakeMulti.HEIGHT);
-        BitmapFont font = new BitmapFont();
-        font.draw(sb, "You are alone :( , wait for minimum two player", SnakeMulti.WIDTH/80,(SnakeMulti.HEIGHT - SnakeMulti.HEIGHT/8) );
-        readyButton.draw(sb,5);
+        //font.draw(sb, Integer.toString(score), SnakeMulti.WIDTH/2,SnakeMulti.HEIGHT/2);
+        for (int i = 1; i <= 10; i++) {
+            font.draw(sb, i + ":", SnakeMulti.WIDTH / 2 - 100, SnakeMulti.HEIGHT - 300 - i * 30);
+        }
+
         sb.end(); // close the box
 
         //everything inside the box will be rendered
