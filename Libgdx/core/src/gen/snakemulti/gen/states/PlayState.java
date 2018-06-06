@@ -4,10 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.google.gson.Gson;
 import gen.snakemulti.Game;
 import gen.snakemulti.GameConstants;
 import gen.snakemulti.SnakeMulti;
+import gen.snakemulti.WallsSchemasGenerator;
 import gen.snakemulti.sprites.Apple;
 import gen.snakemulti.sprites.Bonus;
 import gen.snakemulti.sprites.Penalty;
@@ -25,7 +27,7 @@ import java.util.Map;
 
 public class PlayState extends State {
 
-    private static String IP_SERVER   = "192.168.0.46";//"10.192.91.133";
+    private static String IP_SERVER   = "192.168.0.46";//"10.192.91.197";//
     private static int    PORT_SERVER = 2830;
 
     private String clientName;
@@ -41,23 +43,20 @@ public class PlayState extends State {
 
     private Gson gson;
 
-    //private boolean isEat = true;
-    //private Apple apple;
-
     private Map<String, Snake> players;
     private List<Apple> apples;
     private List<Bonus> bonuses;
     private List<Penalty> penalties;
     private List<Texture> playersTexture;
+    private List<Vector2> walls;
 
     //TESTS ENLEVER DES TRUC DE RENDER
-    String textureName = "snake" + 1 + ".png";
-    Texture texture = new Texture(textureName);
-    String textureNameApple = "apple16.png";
-    Texture textureApple = new Texture(textureNameApple);
+    private String textureName = "snake" + 1 + ".png";
+    private Texture texture = new Texture(textureName);
+    private Texture textureApple = new Texture(GameConstants.APPLE_TEXTURE_NAME);
+    private Texture bricksTexture = new Texture(GameConstants.BRICKS_TEXTURE_NAME);
     ///////////
 
-    //private List<Snake> snakes;
 
     public PlayState(GameStateManager gsm, int numberOfPlayers) {
         super(gsm);
@@ -81,7 +80,7 @@ public class PlayState extends State {
 
         gson = new Gson();
 
-        // Initialize all variables
+        // Initialize the game and variables
         initGame();
     }
 
@@ -127,22 +126,6 @@ public class PlayState extends State {
             snake.kill();
         }
 
-        /*Thread sendAndReceivePosition = new Thread() {
-            public void run() {
-
-                while(true) {
-                    if (snake.isAlive()) {
-                        //sendUPD(snakes.get(0));
-                        sendPosition(snake);
-                    }
-
-                    //receivUPD(2829);
-                    players = receivePosition();
-                }
-            }
-        };
-        sendAndReceivePosition.start();*/
-
         // Send the new position to the server
         sendPosition(snake);
 
@@ -159,7 +142,6 @@ public class PlayState extends State {
 
         // Update the client's snake
         snake = players.get(clientName);
-
     }
 
     ////////////////////////
@@ -204,10 +186,22 @@ public class PlayState extends State {
         //int playerNumber = 1;
         for(Snake s : players.values()) {
             for(int i = 0; i < s.getSize(); i++) {
-
                 sb.draw(texture, s.getBodyParts().get(i).x, s.getBodyParts().get(i).y);
             }
             //playerNumber++;
+        }
+
+        for(Apple apple : apples) {
+            sb.draw(textureApple, apple.getX(), apple.getY());
+        }
+        for(Bonus bonus : bonuses) {
+            sb.draw(bonus.getTexture(), bonus.getX(), bonus.getY());
+        }
+        for(Penalty penalty : penalties) {
+            sb.draw(penalty.getTexture(), penalty.getX(), penalty.getY());
+        }
+        for(Vector2 brick : walls) {
+            sb.draw(bricksTexture, brick.x, brick.y);
         }
 
         sb.end();
@@ -270,6 +264,10 @@ public class PlayState extends State {
         apples    = new ArrayList<>();
         bonuses   = new ArrayList<>();
         penalties = new ArrayList<>();
+
+        // initialize walls schema
+        WallsSchemasGenerator wallsSchemasGenerator = new WallsSchemasGenerator(1);
+        walls = wallsSchemasGenerator.getWallsSchema();
 
         // initialize the game object
         //game = new Game(players, apples, bonuses, penalties);

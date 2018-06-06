@@ -3,7 +3,7 @@ package gen.snakemulti.sprites;
 import com.badlogic.gdx.graphics.Texture;
 import gen.snakemulti.SnakeMulti;
 
-public class Consumable {
+public abstract class Consumable {
 
     private float x;
     private float y;
@@ -48,5 +48,9 @@ public class Consumable {
         if(y >= 0 && y <= SnakeMulti.HEIGHT) {
             this.y = y;
         }
+    }
+
+    public Texture getTexture() {
+        return texture;
     }
 }

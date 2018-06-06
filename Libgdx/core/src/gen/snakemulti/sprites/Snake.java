@@ -23,7 +23,7 @@ public class Snake implements Serializable {
 
     public static final int BODY_SIZE = 4;
 
-    private static final transient int NUMBER_BODYPART_INIT = 50;
+    private static final transient int NUMBER_BODYPART_INIT = 10;
 
     // bodyParts of the snake. Each couple (x,y) represents a bodyPart.
     // At the start of the game, 'bodyParts' is filled with the default number of bodyParts
@@ -35,7 +35,6 @@ public class Snake implements Serializable {
     private float speed;
     private String direction;
     private boolean alive;
-    private int size;
 
     private String name;
     private String ipAdress;
@@ -47,20 +46,20 @@ public class Snake implements Serializable {
         speed = 300f;
         alive = true;
         direction = directionInit;
-        size = NUMBER_BODYPART_INIT;
+
         bodyParts = new ArrayList<Vector2>();
         bodyParts.add(headPosition);
 
         this.name = name;
         this.ipAdress = ipAdress;
 
-        for(int i = 1; i < size; i++) {
+        // initial index = 1, because index 0 is the head
+        for(int i = 1; i < NUMBER_BODYPART_INIT; i++) {
             addBodyPart();
         }
     }
 
     public String getName(){
-
         return name;
     }
 
@@ -112,12 +111,9 @@ public class Snake implements Serializable {
     }
 
     public void addTail(){
-
         for (int i = 0; i < 10 ; i++) {
-
             addBodyPart();
         }
-        size += 10;
     }
 
     public void addBodyPart() {
@@ -148,9 +144,6 @@ public class Snake implements Serializable {
     }
 
     public void moveSnake() {
-        /*for(int i = bodyParts.size()-1; i > 0; i--) {
-            bodyParts.set(i, new Vector2(bodyParts.get(i-1).x, bodyParts.get(i-1).y));
-        }*/
         if(isAlive()) {
             addNewHead();
         }
@@ -158,8 +151,6 @@ public class Snake implements Serializable {
 
     public boolean collides() {
         for(int i = 1; i < bodyParts.size(); i++) {
-            //System.out.println("Collision: ");
-            //System.out.println("head("+headPosition.x+","+headPosition.y+")  body("+bodyParts.get(i).x+","+bodyParts.get(i).y+")");
             if (headPosition.x == bodyParts.get(i).x && headPosition.y == bodyParts.get(i).y) {
                 return true;
             }
@@ -169,7 +160,6 @@ public class Snake implements Serializable {
 
     public boolean collides(Snake otherSnake) {
         for(int i = 0; i < otherSnake.getBodyParts().size(); i++) {
-            //System.out.println("head("+headPosition.x+","+headPosition.y+")  body("+otherSnake.getBodyParts().get(i).x+","+otherSnake.getBodyParts().get(i).y+")");
             if(headPosition.x == otherSnake.getBodyParts().get(i).x && headPosition.y == otherSnake.getBodyParts().get(i).y) {
                 return true;
             }
@@ -178,7 +168,7 @@ public class Snake implements Serializable {
     }
 
     public int getSize() {
-        return size;
+        return bodyParts.size();
     }
 
     private void moveSnakeHead(float dt) {
@@ -207,31 +197,6 @@ public class Snake implements Serializable {
         headPosition.y = pos.y;
     }
 
-    public void update(float dt) {
-        if(alive) {
-
-            if (headPosition.x >= SnakeMulti.WIDTH) {
-                headPosition.x = 0;
-            }
-
-            if (headPosition.x < 0) {
-                headPosition.x = SnakeMulti.WIDTH;
-            }
-
-            if (headPosition.y >= SnakeMulti.HEIGHT) {
-                headPosition.y = 0;
-            }
-
-            if (headPosition.y < 0) {
-                headPosition.y = SnakeMulti.HEIGHT;
-            }
-            alive = !collides();
-        }
-        else {
-
-        }
-    }
-
     public boolean isAlive(){
         return alive;
     }
@@ -243,10 +208,6 @@ public class Snake implements Serializable {
     public Vector2 getHeadPosition() {
         return headPosition;
     }
-
-    /*public List<Texture> getTexture() {
-        return new ArrayList<Texture>(snake);
-    }*/
 
     public void moveX(float amount) {
         headPosition.x += amount;
