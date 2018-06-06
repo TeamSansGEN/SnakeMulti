@@ -49,8 +49,8 @@ public class LobbyState extends State {
 
     public void goToPlayState(){
         playerConnected++;
-        while(playerConnected < NUMBER_OF_PLAYERS)
-        {}
+        //while(playerConnected < NUMBER_OF_PLAYERS)
+        //{}
         gsm.set(new PlayState(gsm,1));
     }
 

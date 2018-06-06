@@ -1,17 +1,8 @@
 package gen.snakemulti.gen.states;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import gen.snakemulti.SnakeMulti;
 import gen.snakemulti.*;
 
@@ -24,6 +15,8 @@ public class LeaderBoardState extends State {
     public LeaderBoardState(GameStateManager gsm) {
         super(gsm);
         background  = new Texture("backgroundLobby.png");
+
+        ConnexionSQL sql = new ConnexionSQL();
 
     }
 
@@ -43,10 +36,6 @@ public class LeaderBoardState extends State {
 
     @Override
     public void render(SpriteBatch sb) {
-
-        ConnexionSQL sql = new ConnexionSQL();
-
-
        // int score = sql.recupScore(1);
 
         sb.begin(); //open the box

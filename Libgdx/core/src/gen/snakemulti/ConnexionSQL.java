@@ -1,4 +1,4 @@
-package gen.snakemulti.gen.states;
+package gen.snakemulti;
 
 
 import sun.security.provider.SecureRandom;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class ConnexionSQL {
     private final static Logger LOG = Logger.getLogger(ConnexionSQL.class.getName());
     private  final String ADRESSE_DEFAUT = "localhost";
-    private final int PORT_DEFAUT = 3306;
+    private final int PORT_DEFAUT = 8889;
     private final String NOM_DB = "snakemulti";
     private String url;
     private final String user = "root";
