@@ -2,6 +2,7 @@ package server;
 
 import com.badlogic.gdx.math.Vector2;
 
+import com.google.gson.Gson;
 import gen.snakemulti.sprites.*;
 
 import javax.xml.crypto.Data;
@@ -20,6 +21,10 @@ public class UDPSocketServer {
     private static Map<String, Snake> players; // <username, snake>
     private int numberOfPlayers;
     private Game game;
+    private Gson gson;
+    private List<Apple> apples;
+    private List<Bonus> bonuses;
+    private List<Penalty> penalties;
     private static int numberOfReadyPlayers = 0;
 
     private static final int[][] INITIAL_POSITIONS = {{48, 600}, {800, 600}, {800, 40}, {48, 40}};
@@ -27,8 +32,9 @@ public class UDPSocketServer {
     public UDPSocketServer(String ipAddress, int port) {
 
         this.port = port;
-        players = new HashMap<String, Snake>();
+        players = new HashMap<>();
         numberOfPlayers = 0;
+        gson = new Gson();
 
         try {
             this.ipAddress = InetAddress.getByName(ipAddress);
@@ -42,9 +48,11 @@ public class UDPSocketServer {
     }
 
     public void listen() {
+        Snake snake;
+
         while(true) {
-            byte[] bufferReceive = new byte[8192];
-            byte[] bufferSend = new byte[8192];
+            byte[] bufferReceive = new byte[GameConstants.BUFF_SIZE];
+            byte[] bufferSend = new byte[GameConstants.BUFF_SIZE];
             DatagramPacket packet = new DatagramPacket(bufferReceive, bufferReceive.length);
             DatagramPacket sendPacket = null;
             try {
@@ -54,37 +62,26 @@ public class UDPSocketServer {
                 ByteArrayInputStream in = new ByteArrayInputStream(bufferReceive);
                 ObjectInputStream is = new ObjectInputStream(in);
 
-                Snake snake = (Snake) is.readObject();
+                snake = (Snake) is.readObject();
 
                 // update the snake Object of the player
                 players.put(snake.getName(), snake);
-                System.out.println(snake.getName() + "(head): "+snake.getHeadPosition().x+", "+snake.getHeadPosition().y+")");
                 String deadPlayer = game.checkCollides(players);
                 if(!deadPlayer.equals("")) {
                     players.get(deadPlayer).kill();
                 }
 
-                //System.out.println(snake.getName() + ": ("+snake.getHeadPosition().x+", "+snake.getHeadPosition().y+")");
+                // update the game with new positions or death
+                game.setPlayers(players);
 
-                ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-                ObjectOutputStream out = new ObjectOutputStream(byteOut);
-                out.writeObject(players);
-                bufferSend = byteOut.toByteArray();
-
+                // generate the packet from json string
+                bufferSend = gson.toJson(game).getBytes();
                 sendPacket = new DatagramPacket(bufferSend, bufferSend.length, packet.getAddress(), packet.getPort());
 
-                //Thread.sleep(16);
+                // send the current game value to all clients
                 socket.send(sendPacket);
 
-                //if(validateSnakePosition(snake.getHeadPosition(), previousPosition)) {
-                if(true) { //TODO
-                    // Send data with all positions (all snakes)
-                    //snakesPositions = new byte[]{'t', 'e', 's', 't'};
-                }
-                else {
-                    //snakesPositions = new byte[]{'0'};
-                }
-
+                //TODO validate position
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -108,16 +105,6 @@ public class UDPSocketServer {
         return false;
     }
 
-    public void sendData(byte[] data, InetAddress ipAddress, int port) {
-        DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, port);
-        try {
-            socket.send(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     public void initGame(String[] playersList){
         numberOfPlayers = playersList.length;
         for(int i = 0; i < numberOfPlayers; i++) {
@@ -130,7 +117,12 @@ public class UDPSocketServer {
             players.put(playersList[i], s);
         }
 
-        game = new Game(players);
+        apples    = new ArrayList<>();
+        bonuses   = new ArrayList<>();
+        penalties = new ArrayList<>();
+
+        // Initialize the game with all players and empty consumables lists
+        game = new Game(players, apples, bonuses, penalties);
 
         // wait to receive 'ready' from all players
         // and send go when everyone is 'ready'.
@@ -142,7 +134,6 @@ public class UDPSocketServer {
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
         while(true) {
-            System.out.println("still in loop");
             try {
                 System.out.println(numberOfReadyPlayers + " players ready");
                 socket.receive(packet);
