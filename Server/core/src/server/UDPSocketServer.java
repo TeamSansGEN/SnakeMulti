@@ -115,25 +115,28 @@ public class UDPSocketServer {
             players.put(playersList[i], s);
         }
 
+        // initialize walls schema
+        WallsSchemasGenerator wallsSchemasGenerator = new WallsSchemasGenerator(1);
+        walls = wallsSchemasGenerator.getWallsSchema();
+
         apples    = new ArrayList<>();
         bonuses   = new ArrayList<>();
         penalties = new ArrayList<>();
 
         // Generate the first apple
-        //Apple apple = new Apple(new Texture("apple16.png"));
         Apple apple = new Apple(GameConstants.APPLE_TEXTURE_NAME);
         apple.setNewPosition();
-        //apple.setNewPosition();
-        //apple.setTexture(new Texture(GameConstants.APPLE_TEXTURE_NAME));
+
+        // Verify that the apple is not generated on an existing object
+        while(!Game.appleValidPosition(apple, walls, new ArrayList<Snake>(players.values()))) {
+            apple.setNewPosition();
+        }
 
         apples.add(apple);
 
         // Initialize the game with all players and empty consumables lists
         game = new Game(players, apples, bonuses, penalties);
 
-        // initialize walls schema
-        WallsSchemasGenerator wallsSchemasGenerator = new WallsSchemasGenerator(1);
-        walls = wallsSchemasGenerator.getWallsSchema();
 
         // wait to receive 'ready' from all players
         // and send go when everyone is 'ready'.

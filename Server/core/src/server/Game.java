@@ -103,7 +103,7 @@ public class Game {
         return false;
     }
 
-    public String eatApple() {
+    public String eatApple(List<Vector2> walls) {
         for(Snake snake : players.values()) {
             // no need to check if the snake is dead
             if(!snake.isAlive()) continue;
@@ -113,6 +113,11 @@ public class Game {
                    snake.getHeadPosition().x - apple.getX() >= 0  && snake.getHeadPosition().y - apple.getY() >= 0){
 
                     apple.setNewPosition();
+
+                    while(!Game.appleValidPosition(apple, walls, new ArrayList<Snake>(players.values()))) {
+                        apple.setNewPosition();
+                    }
+
                     return snake.getName();
                 }
             }
@@ -130,7 +135,7 @@ public class Game {
         }
 
         // check for eaten apples
-        String playerEatsApple = eatApple();
+        String playerEatsApple = eatApple(walls);
 
         if(!playerEatsApple.equals("")) {
             // add a body part to the snake
@@ -142,4 +147,23 @@ public class Game {
         return this;
     }
 
+    public static boolean appleValidPosition(Apple apple, List<Vector2> walls, List<Snake> snakes) {
+
+        for(Vector2 wall: walls) {
+            if(apple.getX() == wall.x && apple.getY() == wall.y) {
+                return false;
+            }
+        }
+
+        for(Snake snake : snakes) {
+            for(int i = 0; i < snake.getSize(); i++) {
+                if (apple.getX() == snake.getBodyParts().get(i).x &&
+                    apple.getY() == snake.getBodyParts().get(i).y) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }
