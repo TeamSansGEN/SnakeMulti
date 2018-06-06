@@ -22,7 +22,7 @@ public class Snake implements Serializable {
 
     public static final int BODY_SIZE = 4;
 
-    private static final transient int NUMBER_BODYPART_INIT = 50;
+    private static final transient int NUMBER_BODYPART_INIT = 10;
 
     // bodyParts of the snake. Each couple (x,y) represents a bodyPart.
     // At the start of the game, 'bodyParts' is filled with the default number of bodyParts
@@ -34,7 +34,6 @@ public class Snake implements Serializable {
     private float speed;
     private String direction;
     private boolean alive;
-    private int size;
 
     private String name;
     private String ipAdress;
@@ -47,27 +46,23 @@ public class Snake implements Serializable {
         speed = 300f;
         alive = true;
         direction = directionInit;
-        size = NUMBER_BODYPART_INIT;
         bodyParts = new ArrayList<Vector2>();
-        //snake = new ArrayList<Texture>();
         bodyParts.add(headPosition);
 
         this.name = name;
         this.ipAdress = ipAdress;
 
-        for(int i = 1; i < size; i++) {
+        for(int i = 1; i < NUMBER_BODYPART_INIT; i++) {
             addBodyPart();
         }
     }
 
     public String getName(){
-
         return name;
     }
 
     public void kill() {
         alive = false;
-        System.out.println("ME DEAD");
     }
 
     public void addBodyPart() {
@@ -104,12 +99,13 @@ public class Snake implements Serializable {
 
     }
 
+    public boolean isAlive() {
+        return alive;
+    }
+
     public boolean collides() {
         for(int i = 1; i < bodyParts.size(); i++) {
-            //System.out.println("Collision: ");
-            //System.out.println("head("+headPosition.x+","+headPosition.y+")  body("+bodyParts.get(i).x+","+bodyParts.get(i).y+")");
             if (headPosition.x == bodyParts.get(i).x && headPosition.y == bodyParts.get(i).y) {
-
                 return true;
             }
         }
@@ -141,7 +137,7 @@ public class Snake implements Serializable {
     }
 
     public int getSize() {
-        return size;
+        return bodyParts.size();
     }
 
     private void moveSnakeHead(float dt) {

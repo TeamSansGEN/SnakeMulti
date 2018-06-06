@@ -9,26 +9,27 @@ public class Consumable {
     private float x;
     private float y;
 
-    private Texture texture;
+    //private Texture texture;
+    private String textureName;
 
     public Consumable() {
 
     }
 
-    public Consumable(float x, float y, Texture texture) {
+    public Consumable(float x, float y, String textureName) {
         if(x < 0 || x > GameConstants.WIDTH) {
             throw new IllegalArgumentException("invalid coordinate (x axis).");
         }
         if(y < 0 || y > GameConstants.HEIGHT) {
             throw new IllegalArgumentException("invalid coordinate (y axis).");
         }
-        if(texture == null) {
+        if(textureName == null) {
             throw new IllegalArgumentException("null texture.");
         }
 
         this.x = x;
         this.y = y;
-        this.texture = texture;
+        this.textureName = textureName;
     }
 
     public float getX() {
@@ -49,5 +50,13 @@ public class Consumable {
         if(y >= 0 && y <= GameConstants.HEIGHT) {
             this.y = y;
         }
+    }
+
+    public String getTexture() {
+        return textureName;
+    }
+
+    public void setTexture(String textureName) {
+        this.textureName = textureName;
     }
 }

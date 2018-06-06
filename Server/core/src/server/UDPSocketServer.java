@@ -1,5 +1,6 @@
 package server;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
 import com.google.gson.Gson;
@@ -25,6 +26,7 @@ public class UDPSocketServer {
     private List<Apple> apples;
     private List<Bonus> bonuses;
     private List<Penalty> penalties;
+    private List<Vector2> walls;
     private static int numberOfReadyPlayers = 0;
 
     private static final int[][] INITIAL_POSITIONS = {{48, 600}, {800, 600}, {800, 40}, {48, 40}};
@@ -66,12 +68,9 @@ public class UDPSocketServer {
 
                 // update the snake Object of the player
                 players.put(snake.getName(), snake);
-                String deadPlayer = game.checkCollides(players);
-                if(!deadPlayer.equals("")) {
-                    players.get(deadPlayer).kill();
-                }
 
-                // update the game with new positions or death
+                // update the game
+                game = game.update(walls);
                 game.setPlayers(players);
 
                 // generate the packet from json string
@@ -112,7 +111,6 @@ public class UDPSocketServer {
             int initX = INITIAL_POSITIONS[i][0];
             int initY = INITIAL_POSITIONS[i][1];
             String initDirection = Snake.DIRECTIONS[1];
-
             Snake s = new Snake(initX, initY, initDirection, playersList[i], "127.0.0.1");
             players.put(playersList[i], s);
         }
@@ -121,8 +119,21 @@ public class UDPSocketServer {
         bonuses   = new ArrayList<>();
         penalties = new ArrayList<>();
 
+        // Generate the first apple
+        //Apple apple = new Apple(new Texture("apple16.png"));
+        Apple apple = new Apple(GameConstants.APPLE_TEXTURE_NAME);
+        apple.setNewPosition();
+        //apple.setNewPosition();
+        //apple.setTexture(new Texture(GameConstants.APPLE_TEXTURE_NAME));
+
+        apples.add(apple);
+
         // Initialize the game with all players and empty consumables lists
         game = new Game(players, apples, bonuses, penalties);
+
+        // initialize walls schema
+        WallsSchemasGenerator wallsSchemasGenerator = new WallsSchemasGenerator(1);
+        walls = wallsSchemasGenerator.getWallsSchema();
 
         // wait to receive 'ready' from all players
         // and send go when everyone is 'ready'.

@@ -11,19 +11,27 @@ public class Apple extends Consumable {
     //https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
 
     public Apple(){
+
     }
 
-    public Apple(float x, float y, Texture texture) {
-        super(x, y, texture);
+    public Apple(String textureName) {
+        setNewPosition();
     }
 
-    public int randomX(){
+    public Apple(float x, float y, String textureName) {
+        super(x, y, textureName);
+    }
 
+    public void setNewPosition() {
+        setX(randomX());
+        setY(randomY());
+    }
+
+    private int randomX(){
         return ThreadLocalRandom.current().nextInt(Math.abs(GameConstants.WIDTH+1-20));
     }
 
-    public int randomY(){
-
+    private int randomY(){
         return ThreadLocalRandom.current().nextInt(Math.abs(GameConstants.HEIGHT+1-20));
     }
 }

@@ -1,5 +1,6 @@
 package server;
 
+import com.badlogic.gdx.math.Vector2;
 import gen.snakemulti.sprites.Apple;
 import gen.snakemulti.sprites.Bonus;
 import gen.snakemulti.sprites.Penalty;
@@ -59,12 +60,19 @@ public class Game {
         this.players = players;
     }
 
-    public String checkCollides(Map<String, Snake> players) {
+    public String checkCollides(Map<String, Snake> players, List<Vector2> walls) {
         for(String k1 : players.keySet()) {
+            // no need to check if the snake is dead
+            if(!players.get(k1).isAlive()) continue;
+
+            if(collidesWalls(players.get(k1), walls)) {
+                return k1;
+            }
+
             for(String k2 : players.keySet()) {
+                // TODO: self collision on client or server ????
                 if(k1.equals(k2)) continue;
 
-                //if(players.get(k1).collides(players.get(k2))) {
                 if(collides(players.get(k1), players.get(k2))) {
                     return k1;
                 }
@@ -81,6 +89,57 @@ public class Game {
         }
 
         return false;
+    }
+
+    private static boolean collidesWalls(Snake s, List<Vector2> walls) {
+        for(Vector2 wall : walls) {
+            if(s.getHeadPosition().x - wall.x <= GameConstants.BRICK_SIZE &&
+               s.getHeadPosition().y - wall.y <= GameConstants.BRICK_SIZE &&
+               s.getHeadPosition().x - wall.x >= 0 && s.getHeadPosition().y - wall.y >= 0) {
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String eatApple() {
+        for(Snake snake : players.values()) {
+            // no need to check if the snake is dead
+            if(!snake.isAlive()) continue;
+
+            for(Apple apple : apples) {
+                if(snake.getHeadPosition().x - apple.getX() <= 16 && snake.getHeadPosition().y - apple.getY() <= 16 &&
+                   snake.getHeadPosition().x - apple.getX() >= 0  && snake.getHeadPosition().y - apple.getY() >= 0){
+
+                    apple.setNewPosition();
+                    return snake.getName();
+                }
+            }
+        }
+
+        return "";
+    }
+
+    public Game update(List<Vector2> walls) {
+        // check for collisions
+        String deadPlayer = checkCollides(players, walls);
+        if(!deadPlayer.equals("")) {
+            // kill the player
+            players.get(deadPlayer).kill();
+        }
+
+        // check for eaten apples
+        String playerEatsApple = eatApple();
+
+        if(!playerEatsApple.equals("")) {
+            // add a body part to the snake
+            for(int i = 0; i < GameConstants.GROWTH; i++) {
+                players.get(playerEatsApple).addBodyPart();
+            }
+        }
+
+        return this;
     }
 
 }
