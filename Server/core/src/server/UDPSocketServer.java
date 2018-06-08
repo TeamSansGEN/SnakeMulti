@@ -1,12 +1,10 @@
 package server;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
 import com.google.gson.Gson;
 import gen.snakemulti.sprites.*;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -123,16 +121,36 @@ public class UDPSocketServer {
         bonuses   = new ArrayList<>();
         penalties = new ArrayList<>();
 
-        // Generate the first apple
-        Apple apple = new Apple(GameConstants.APPLE_TEXTURE_NAME);
-        apple.setNewPosition();
+        // Generate apples
+        for(int i = 0; i < GameConstants.MAX_APPLES; i++) {
+            Apple apple = new Apple(GameConstants.APPLE_TEXTURE_NAME);
 
-        // Verify that the apple is not generated on an existing object
-        while(!Game.appleValidPosition(apple, walls, new ArrayList<Snake>(players.values()))) {
-            apple.setNewPosition();
+            // Verify that the apple is not generated on an existing object
+            while (!Game.consumableValidPosition(apple, walls, new ArrayList<Snake>(players.values()))) {
+                apple.setNewPosition();
+            }
+            apples.add(apple);
         }
 
-        apples.add(apple);
+        for(int i = 0; i < GameConstants.MAX_BONUSES; i++) {
+            // Generate bonuses
+            Bonus bonus = new Bonus(GameConstants.SPEED_BONUS_TEXTURE_NAME);
+
+            // Verify that the bonus is not generated on an existing object
+            while (!Game.consumableValidPosition(bonus, walls, new ArrayList<Snake>(players.values()))) {
+                bonus.setNewPosition();
+            }
+            bonuses.add(bonus);
+        }
+
+        // Generate penalties
+        for(int i = 0; i < GameConstants.MAX_PENALTIES; i++) {
+
+        }
+
+
+
+
 
         // Initialize the game with all players and empty consumables lists
         game = new Game(players, apples, bonuses, penalties);

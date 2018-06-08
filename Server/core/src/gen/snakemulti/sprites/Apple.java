@@ -1,10 +1,5 @@
 package gen.snakemulti.sprites;
 
-import com.badlogic.gdx.graphics.Texture;
-import server.GameConstants;
-
-import java.util.concurrent.ThreadLocalRandom;
-
 public class Apple extends Consumable {
 
     //Random
@@ -15,23 +10,11 @@ public class Apple extends Consumable {
     }
 
     public Apple(String textureName) {
-        setNewPosition();
+        super(textureName);
     }
 
     public Apple(float x, float y, String textureName) {
         super(x, y, textureName);
     }
 
-    public void setNewPosition() {
-        setX(randomX());
-        setY(randomY());
-    }
-
-    private int randomX(){
-        return ThreadLocalRandom.current().nextInt(Math.abs(GameConstants.WIDTH+1-20));
-    }
-
-    private int randomY(){
-        return ThreadLocalRandom.current().nextInt(Math.abs(GameConstants.HEIGHT+1-20));
-    }
 }

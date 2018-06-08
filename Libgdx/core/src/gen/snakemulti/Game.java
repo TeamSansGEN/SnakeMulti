@@ -16,6 +16,7 @@ public class Game {
     private List<Apple> apples;
     private List<Bonus> bonuses;
     private List<Penalty> penalties;
+    private Map<String, Integer> playerSpeed;
 
     public Game(Map<String, Snake> players) {
         if(players == null) {
@@ -26,6 +27,11 @@ public class Game {
         apples       = new ArrayList<>();
         bonuses      = new ArrayList<>();
         penalties    = new ArrayList<>();
+        playerSpeed  = new HashMap<>();
+
+        for(String player : players.keySet()) {
+            playerSpeed.put(player, players.get(player).getSpeed());
+        }
     }
 
     public Game(Map<String, Snake> players, List<Apple> apples, List<Bonus> bonuses, List<Penalty> penalties) {
@@ -37,6 +43,11 @@ public class Game {
         this.apples    = new ArrayList<>(apples);
         this.bonuses   = new ArrayList<>(bonuses);
         this.penalties = new ArrayList<>(penalties);
+        playerSpeed = new HashMap<>();
+
+        for(String player : players.keySet()) {
+            playerSpeed.put(player, players.get(player).getSpeed());
+        }
     }
 
     public Map<String, Snake> getPlayers() {
@@ -53,5 +64,9 @@ public class Game {
 
     public List<Penalty> getPenalties() {
         return penalties;
+    }
+
+    public Map<String, Integer> getPlayerSpeed() {
+        return playerSpeed;
     }
 }

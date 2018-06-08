@@ -1,7 +1,7 @@
 package gen.snakemulti.sprites;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import server.GameConstants;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,26 +31,26 @@ public class Snake implements Serializable {
     private Vector2  headPosition;
     private Vector2 tailPosition;
 
-    private float speed;
+    private int speed;
     private String direction;
     private boolean alive;
 
     private String name;
-    private String ipAdress;
+    private String ipAddress;
 
     //private transient List<Texture> snake;
 
-    public Snake(float x, float y, String directionInit, String name, String ipAdress) {
+    public Snake(float x, float y, String directionInit, String name, String ipAddress) {
         headPosition = new Vector2(x, y);
         tailPosition = new Vector2(headPosition.x, headPosition.y);
-        speed = 300f;
+        speed = GameConstants.DEFAULT_SPEED;
         alive = true;
         direction = directionInit;
         bodyParts = new ArrayList<Vector2>();
         bodyParts.add(headPosition);
 
         this.name = name;
-        this.ipAdress = ipAdress;
+        this.ipAddress = ipAddress;
 
         for(int i = 1; i < NUMBER_BODYPART_INIT; i++) {
             addBodyPart();
@@ -209,7 +209,7 @@ public class Snake implements Serializable {
         headPosition.y += amount;
     }
 
-    public float getSpeed() {
+    public int getSpeed() {
         return speed;
     }
 
@@ -221,15 +221,32 @@ public class Snake implements Serializable {
         this.direction = direction;
     }
 
-    public String getIpAdress(){
+    public void setSpeed(int newSpeed) {
+        if(newSpeed >= 0) {
+            speed = newSpeed;
+        }
+    }
 
-        return ipAdress;
+    public void incrSpeed() {
+        speed++;
+    }
+
+    public void decrSpeed() {
+        if(speed > 0) {
+            System.out.println(name + " decrSpeed.");
+            speed--;
+        }
+    }
+
+    public String getIpAddress(){
+
+        return ipAddress;
     }
 
     public String toString(){
 
         StringBuilder s = new StringBuilder();
-        s.append("IP :" + ipAdress + " ");
+        s.append("IP :" + ipAddress + " ");
         s.append("Name :" + name + " ");
         s.append("Body : " + getBodyParts().get(0));
         for (int i = 0; i< getBodyParts().size(); ++i) {

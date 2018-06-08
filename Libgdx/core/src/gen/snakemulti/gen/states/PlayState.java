@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class PlayState extends State {
 
-    private static String IP_SERVER   = "192.168.0.46";//"10.192.91.197";//
+    private static String IP_SERVER   = "192.168.0.46";
     private static int    PORT_SERVER = 2830;
 
     private String clientName;
@@ -48,6 +48,7 @@ public class PlayState extends State {
     private List<Bonus> bonuses;
     private List<Penalty> penalties;
     private List<Texture> playersTexture;
+    private Map<String, Integer> playerSpeed;
     private List<Vector2> walls;
 
     //TESTS ENLEVER DES TRUC DE RENDER
@@ -55,6 +56,7 @@ public class PlayState extends State {
     private Texture texture = new Texture(textureName);
     private Texture textureApple = new Texture(GameConstants.APPLE_TEXTURE_NAME);
     private Texture bricksTexture = new Texture(GameConstants.BRICKS_TEXTURE_NAME);
+    private Texture bonus1Texture = new Texture(GameConstants.SPEED_BONUS_TEXTURE_NAME);
     ///////////
 
 
@@ -136,12 +138,18 @@ public class PlayState extends State {
         players = game.getPlayers();
 
         // Get new consumables lists from the server
-        apples    = game.getApples();
-        bonuses   = game.getBonuses();
-        penalties = game.getPenalties();
+        apples      = game.getApples();
+        bonuses     = game.getBonuses();
+        penalties   = game.getPenalties();
+        playerSpeed = game.getPlayerSpeed();
 
         // Update the client's snake
         snake = players.get(clientName);
+        //System.out.println(playerSpeed);
+        //System.out.println(playerSpeed.get(clientName));
+        snake.setSpeed(game.getPlayerSpeed().get(clientName));
+
+
     }
 
     ////////////////////////
@@ -195,7 +203,7 @@ public class PlayState extends State {
             sb.draw(textureApple, apple.getX(), apple.getY());
         }
         for(Bonus bonus : bonuses) {
-            sb.draw(bonus.getTexture(), bonus.getX(), bonus.getY());
+            sb.draw(bonus1Texture, bonus.getX(), bonus.getY());
         }
         for(Penalty penalty : penalties) {
             sb.draw(penalty.getTexture(), penalty.getX(), penalty.getY());

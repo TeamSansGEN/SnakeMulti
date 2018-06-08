@@ -3,6 +3,8 @@ package gen.snakemulti.sprites;
 import com.badlogic.gdx.graphics.Texture;
 import server.GameConstants;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 
 public class Consumable {
 
@@ -14,6 +16,14 @@ public class Consumable {
 
     public Consumable() {
 
+    }
+
+    public Consumable(String textureName) {
+        if(textureName == null) {
+            throw new IllegalArgumentException("null texture.");
+        }
+        this.textureName = textureName;
+        setNewPosition();
     }
 
     public Consumable(float x, float y, String textureName) {
@@ -58,5 +68,18 @@ public class Consumable {
 
     public void setTexture(String textureName) {
         this.textureName = textureName;
+    }
+
+    public void setNewPosition() {
+        x = randomX();
+        y = randomY();
+    }
+
+    private int randomX(){
+        return ThreadLocalRandom.current().nextInt(Math.abs(GameConstants.WIDTH+1-20));
+    }
+
+    private int randomY(){
+        return ThreadLocalRandom.current().nextInt(Math.abs(GameConstants.HEIGHT+1-20));
     }
 }

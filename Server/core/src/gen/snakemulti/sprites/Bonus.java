@@ -1,10 +1,12 @@
 package gen.snakemulti.sprites;
 
-import com.badlogic.gdx.graphics.Texture;
-
 public class Bonus extends Consumable {
 
-    public Bonus(float x, float y, String texture) {
-        super(x, y, texture);
+    public Bonus(String textureName) {
+        super(textureName);
+    }
+
+    public Bonus(float x, float y, String textureName) {
+        super(x, y, textureName);
     }
 }
