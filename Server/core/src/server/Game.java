@@ -159,43 +159,66 @@ public class Game {
         return "";
     }
 
-    public Game update(final List<Vector2> walls) {
+    private boolean roundFinished() {
+        int totalPlayers = players.size();
+        int totalDeadPlayers = 0;
 
-        // check for collisions
-        String deadPlayer = checkCollides(players, walls);
-        if (!deadPlayer.equals("")) {
-            // kill the player
-            players.get(deadPlayer).kill();
-        }
 
-        // check for eaten apples
-        final String playerEatsApple = eatApple(walls);
-        if (!playerEatsApple.equals("")) {
-            // add a body part to the snake
-            for (int i = 0; i < GameConstants.GROWTH; i++) {
-                players.get(playerEatsApple).addBodyPart();
+        for(Snake snake : players.values()) {
+            if(!snake.isAlive()) {
+                totalDeadPlayers++;
             }
         }
 
-        // check for eaten bonuses
-        final String playerEatsBonus = eatBonus(walls);
-        if (!playerEatsBonus.equals("")) {
-            // add effect of the bonus
-            players.get(playerEatsBonus).incrSpeed();
-            playerSpeed.put(playerEatsBonus, playerSpeed.get(playerEatsBonus) + 1);
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-
-                    playerSpeed.put(playerEatsBonus, playerSpeed.get(playerEatsBonus) - 1);
-
-                    update(walls);
-
-                }
-            }, 3000);
+        if(totalDeadPlayers >= totalPlayers -1) {
+            return true;
         }
 
-        System.out.println("END OF UPDATE " + players.get("Jee").getName() + " speed = " + players.get("Jee").getSpeed());
+        return false;
+    }
+
+    public Game update(final List<Vector2> walls) {
+
+        // end of the round => beginning a new round
+        if(roundFinished()) {
+            return null;
+        }
+
+        else {
+            // check for collisions
+            String deadPlayer = checkCollides(players, walls);
+            if (!deadPlayer.equals("")) {
+                // kill the player
+                players.get(deadPlayer).kill();
+            }
+
+            // check for eaten apples
+            final String playerEatsApple = eatApple(walls);
+            if (!playerEatsApple.equals("")) {
+                // add a body part to the snake
+                for (int i = 0; i < GameConstants.GROWTH; i++) {
+                    players.get(playerEatsApple).addBodyPart();
+                }
+            }
+
+            // check for eaten bonuses
+            final String playerEatsBonus = eatBonus(walls);
+            if (!playerEatsBonus.equals("")) {
+                // add effect of the bonus
+                players.get(playerEatsBonus).incrSpeed();
+                playerSpeed.put(playerEatsBonus, playerSpeed.get(playerEatsBonus) + 1);
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        playerSpeed.put(playerEatsBonus, playerSpeed.get(playerEatsBonus) - 1);
+
+                        update(walls);
+
+                    }
+                }, 3000);
+            }
+        }
 
         return this;
     }

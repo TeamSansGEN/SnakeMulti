@@ -25,6 +25,7 @@ public class UDPSocketServer {
     private List<Bonus> bonuses;
     private List<Penalty> penalties;
     private List<Vector2> walls;
+    private String [] playersList;
     private static int numberOfReadyPlayers = 0;
 
     private static final int[][] INITIAL_POSITIONS = {{48, 600}, {800, 600}, {800, 40}, {48, 40}};
@@ -57,6 +58,7 @@ public class UDPSocketServer {
             DatagramPacket sendPacket = null;
             try {
                 socket.receive(packet);
+                System.out.println("RECEIVED PACKET FROM " + socket.getInetAddress());
 
                 bufferReceive = packet.getData();
                 ByteArrayInputStream in = new ByteArrayInputStream(bufferReceive);
@@ -69,6 +71,12 @@ public class UDPSocketServer {
 
                 // update the game
                 game = game.update(walls);
+
+                // new round
+                if(game == null) {
+                    initGame(playersList);
+                }
+
                 game.setPlayers(players);
 
                 // generate the packet from json string
@@ -77,6 +85,7 @@ public class UDPSocketServer {
 
                 // send the current game value to all clients
                 socket.send(sendPacket);
+                System.out.println("PACKET SENT TO " + socket.getInetAddress());
 
                 //TODO validate position
 
@@ -103,6 +112,11 @@ public class UDPSocketServer {
     }
 
     public void initGame(String[] playersList){
+        this.playersList = new String[playersList.length];
+        for(int i = 0; i < playersList.length; i++) {
+            this.playersList[i] = playersList[i];
+        }
+
         numberOfPlayers = playersList.length;
         for(int i = 0; i < numberOfPlayers; i++) {
 
