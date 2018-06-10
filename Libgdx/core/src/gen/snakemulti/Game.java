@@ -1,5 +1,6 @@
 package gen.snakemulti;
 
+import com.badlogic.gdx.math.Vector2;
 import gen.snakemulti.sprites.Apple;
 import gen.snakemulti.sprites.Bonus;
 import gen.snakemulti.sprites.Penalty;
@@ -16,6 +17,7 @@ public class Game {
     private List<Apple> apples;
     private List<Bonus> bonuses;
     private List<Penalty> penalties;
+    private List<Vector2> poops;
     private Map<String, Integer> playerSpeed;
 
     public Game(Map<String, Snake> players) {
@@ -27,6 +29,7 @@ public class Game {
         apples       = new ArrayList<>();
         bonuses      = new ArrayList<>();
         penalties    = new ArrayList<>();
+        poops        = new ArrayList<>();
         playerSpeed  = new HashMap<>();
 
         for(String player : players.keySet()) {
@@ -34,7 +37,7 @@ public class Game {
         }
     }
 
-    public Game(Map<String, Snake> players, List<Apple> apples, List<Bonus> bonuses, List<Penalty> penalties) {
+    public Game(Map<String, Snake> players, List<Apple> apples, List<Bonus> bonuses, List<Penalty> penalties, List<Vector2> poops) {
         if(players == null || apples == null || bonuses == null || penalties == null) {
             throw new IllegalArgumentException("null arguments.");
         }
@@ -43,6 +46,7 @@ public class Game {
         this.apples    = new ArrayList<>(apples);
         this.bonuses   = new ArrayList<>(bonuses);
         this.penalties = new ArrayList<>(penalties);
+        this.poops     = new ArrayList<>(poops);
         playerSpeed = new HashMap<>();
 
         for(String player : players.keySet()) {
@@ -68,5 +72,9 @@ public class Game {
 
     public Map<String, Integer> getPlayerSpeed() {
         return playerSpeed;
+    }
+
+    public List<Vector2> getPoops() {
+        return poops;
     }
 }

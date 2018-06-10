@@ -64,4 +64,12 @@ public abstract class GameConstants {
      * Number of penalties
      */
     public static final int MAX_PENALTIES = 1;
+
+    /**
+     * First  dead: 0 point
+     * Second dead: 1 point
+     * Third  dead: 3 points
+     * Last  alive: 5 points
+     */
+    public static int[] SCORES = {0, 1, 3, 5};
 }

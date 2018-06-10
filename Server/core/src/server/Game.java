@@ -11,7 +11,12 @@ public class Game {
     private List<Apple> apples;
     private List<Bonus> bonuses;
     private List<Penalty> penalties;
+    private List<Vector2> poops;
+    private Map<String, Integer> playerScore;
     private Map<String, Integer> playerSpeed;
+
+    private static int numberOfDead;
+    private static int round = 1;
 
     public Game(Map<String, Snake> players) {
         if (players == null) {
@@ -22,14 +27,18 @@ public class Game {
         apples = new ArrayList<>();
         bonuses = new ArrayList<>();
         penalties = new ArrayList<>();
+        poops = new ArrayList<>();
         playerSpeed = new HashMap<>();
+        playerScore = new HashMap<>();
+        numberOfDead = 0;
 
-        for(String player : players.keySet()) {
+        for (String player : players.keySet()) {
             playerSpeed.put(player, players.get(player).getSpeed());
+            playerScore.put(player, 0);
         }
     }
 
-    public Game(Map<String, Snake> players, List<Apple> apples, List<Bonus> bonuses, List<Penalty> penalties) {
+    public Game(Map<String, Snake> players, List<Apple> apples, List<Bonus> bonuses, List<Penalty> penalties, List<Vector2> poops) {
         if (players == null || apples == null || bonuses == null || penalties == null) {
             throw new IllegalArgumentException("null arguments.");
         }
@@ -38,12 +47,22 @@ public class Game {
         this.apples = new ArrayList<>(apples);
         this.bonuses = new ArrayList<>(bonuses);
         this.penalties = new ArrayList<>(penalties);
+        this.poops = new ArrayList<>(poops);
 
         playerSpeed = new HashMap<>();
+        playerScore = new HashMap<>();
 
-        for(String player : players.keySet()) {
+        numberOfDead = 0;
+
+        for (String player : players.keySet()) {
             playerSpeed.put(player, players.get(player).getSpeed());
+            playerScore.put(player, 0);
         }
+    }
+
+    public Game(Map<String, Snake> players, List<Apple> apples, List<Bonus> bonuses, List<Penalty> penalties, List<Vector2> poops, Map<String, Integer> playerScore) {
+        this(players, apples, bonuses, penalties, poops);
+        this.playerScore = new HashMap<>(playerScore);
     }
 
     public Map<String, Snake> getPlayers() {
@@ -66,6 +85,18 @@ public class Game {
         return playerSpeed;
     }
 
+    public static int getNumberOfDead() {
+        return numberOfDead;
+    }
+
+    public Map<String, Integer> getPlayerScore() {
+        return playerScore;
+    }
+
+    public List<Vector2> getPoops() {
+        return poops;
+    }
+
     public void setPlayers(Map<String, Snake> players) {
         this.players = players;
     }
@@ -79,6 +110,12 @@ public class Game {
                 return k1;
             }
 
+            if (collidesPoops(players.get(k1))) {
+                return k1;
+            }
+
+            generatePoop(players.get(k1));
+
             for (String k2 : players.keySet()) {
                 // TODO: self collision on client or server ????
                 if (k1.equals(k2)) continue;
@@ -89,6 +126,15 @@ public class Game {
             }
         }
         return "";
+    }
+
+    private boolean collidesPoops(Snake s) {
+        for (Vector2 poop : poops) {
+            if (s.getHeadPosition().x == poop.x && s.getHeadPosition().y == poop.y) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean collides(Snake s1, Snake s2) {
@@ -160,64 +206,77 @@ public class Game {
     }
 
     private boolean roundFinished() {
-        int totalPlayers = players.size();
-        int totalDeadPlayers = 0;
-
-
-        for(Snake snake : players.values()) {
-            if(!snake.isAlive()) {
-                totalDeadPlayers++;
+        if (numberOfDead >= players.size() - 1) {
+            for (Snake s : players.values()) {
+                if (s.isAlive()) {
+                    // give score to winner
+                    playerScore.put(s.getName(), playerScore.get(s.getName()) + GameConstants.SCORES[numberOfDead]);
+                }
             }
-        }
 
-        if(totalDeadPlayers >= totalPlayers -1) {
+            System.out.println("\nEnd of round " + round);
+            for (String player : playerScore.keySet()) {
+                System.out.println(player + ": " + playerScore.get(player) + " point(s).");
+            }
+
+            round++;
             return true;
         }
-
         return false;
+    }
+
+    private void generatePoop(Snake s) {
+        double randDouble = Math.random(); // [0, 1[
+
+        if (randDouble < 0.005) { //&& s.getName().equals("Jee")) {
+            poops.add(new Vector2(s.getTailPosition().x, s.getTailPosition().y));
+        }
     }
 
     public Game update(final List<Vector2> walls) {
 
-        // end of the round => beginning a new round
-        if(roundFinished()) {
-            return null;
+        // check for collisions
+        String deadPlayer = checkCollides(players, walls);
+        if (!deadPlayer.equals("")) {
+            // give score to dead player
+            playerScore.put(deadPlayer, playerScore.get(deadPlayer) + GameConstants.SCORES[numberOfDead]);
+
+            // kill the player
+            players.get(deadPlayer).kill();
+            numberOfDead++;
         }
 
-        else {
-            // check for collisions
-            String deadPlayer = checkCollides(players, walls);
-            if (!deadPlayer.equals("")) {
-                // kill the player
-                players.get(deadPlayer).kill();
+        // check for eaten apples
+        final String playerEatsApple = eatApple(walls);
+        if (!playerEatsApple.equals("")) {
+            // add a body part to the snake
+            for (int i = 0; i < GameConstants.GROWTH; i++) {
+                players.get(playerEatsApple).addBodyPart();
             }
+        }
 
-            // check for eaten apples
-            final String playerEatsApple = eatApple(walls);
-            if (!playerEatsApple.equals("")) {
-                // add a body part to the snake
-                for (int i = 0; i < GameConstants.GROWTH; i++) {
-                    players.get(playerEatsApple).addBodyPart();
+        // check for eaten bonuses
+        final String playerEatsBonus = eatBonus(walls);
+        if (!playerEatsBonus.equals("")) {
+            // add effect of the bonus
+            players.get(playerEatsBonus).incrSpeed();
+            playerSpeed.put(playerEatsBonus, playerSpeed.get(playerEatsBonus) + 1);
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+
+                    playerSpeed.put(playerEatsBonus, playerSpeed.get(playerEatsBonus) - 1);
+
+                    update(walls);
+
                 }
-            }
+            }, 3000);
+        }
 
-            // check for eaten bonuses
-            final String playerEatsBonus = eatBonus(walls);
-            if (!playerEatsBonus.equals("")) {
-                // add effect of the bonus
-                players.get(playerEatsBonus).incrSpeed();
-                playerSpeed.put(playerEatsBonus, playerSpeed.get(playerEatsBonus) + 1);
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
 
-                        playerSpeed.put(playerEatsBonus, playerSpeed.get(playerEatsBonus) - 1);
-
-                        update(walls);
-
-                    }
-                }, 3000);
-            }
+        // end of the round => beginning a new round
+        if(roundFinished()) {
+            return this;
         }
 
         return this;

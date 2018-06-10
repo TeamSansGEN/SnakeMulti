@@ -10,10 +10,13 @@ public class LobbyState extends State {
     private Texture background;
     private Texture readyButton;
 
-    public LobbyState(GameStateManager gsm) {
+    private String username;
+
+    public LobbyState(GameStateManager gsm, String username) {
         super(gsm);
         background  = new Texture("backgroundLobby.png");
         readyButton = new Texture("readyButton.png");
+        this.username = username;
     }
 
     @Override

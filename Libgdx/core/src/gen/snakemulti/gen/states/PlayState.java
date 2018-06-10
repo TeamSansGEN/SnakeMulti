@@ -3,8 +3,11 @@ package gen.snakemulti.gen.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.google.gson.Gson;
 import gen.snakemulti.Game;
 import gen.snakemulti.GameConstants;
@@ -47,6 +50,7 @@ public class PlayState extends State {
     private List<Apple> apples;
     private List<Bonus> bonuses;
     private List<Penalty> penalties;
+    private List<Vector2> poops;
     private List<Texture> playersTexture;
     private Map<String, Integer> playerSpeed;
     private List<Vector2> walls;
@@ -59,6 +63,10 @@ public class PlayState extends State {
     private Texture bonus1Texture = new Texture(GameConstants.SPEED_BONUS_TEXTURE_NAME);
     ///////////
 
+    BitmapFont scoresFont;
+    Label.LabelStyle textStyle;
+    Label text;
+    private Stage stage;
 
     public PlayState(GameStateManager gsm, int numberOfPlayers) {
         super(gsm);
@@ -81,6 +89,13 @@ public class PlayState extends State {
         }
 
         gson = new Gson();
+
+        stage = new Stage();
+        scoresFont = new BitmapFont();
+        textStyle = new Label.LabelStyle();
+        textStyle.font = scoresFont;
+        text = new Label("Jee 0", textStyle);
+        stage.addActor(text);
 
         // Initialize the game and variables
         initGame();
@@ -142,54 +157,17 @@ public class PlayState extends State {
         bonuses     = game.getBonuses();
         penalties   = game.getPenalties();
         playerSpeed = game.getPlayerSpeed();
+        poops       = game.getPoops();
 
         // Update the client's snake
         snake = players.get(clientName);
-        //System.out.println(playerSpeed);
-        //System.out.println(playerSpeed.get(clientName));
         snake.setSpeed(game.getPlayerSpeed().get(clientName));
-
-
     }
-
-    ////////////////////////
-    ////////////////////////
-    ////////////////////////
-
-    // TODO wtf???
-    //private int appX;
-    //private int appY;
-
-
-    // TODO wtf???
-    /*public void changeBool(){
-        isEat = true;
-    }*/
-
-    /*public void eatApple(int x, int y){
-
-        if(snake.getHeadPosition().x - x <= textureApple.getWidth() && snake.getHeadPosition().y - y <= textureApple.getHeight() &&
-                snake.getHeadPosition().x - x >= 0  && snake.getHeadPosition().y - y >= 0){
-            isEat = true;
-        }
-    }*/
 
     @Override
     public void render(SpriteBatch sb) {
         sb.begin();
         sb.draw(background, 0, 0, SnakeMulti.WIDTH, SnakeMulti.HEIGHT);
-
-        /*eatApple(appX, appY);
-
-        // TODO wtf ???
-        if(isEat) {
-            snake.addTail();
-            isEat= false;
-            appX = apple.randomX();
-            appY = apple.randomY();
-        }*/
-
-        //sb.draw(textureApple, appX, appY);
 
         //int playerNumber = 1;
         for(Snake s : players.values()) {
@@ -199,18 +177,34 @@ public class PlayState extends State {
             //playerNumber++;
         }
 
+        // draw apples
         for(Apple apple : apples) {
             sb.draw(textureApple, apple.getX(), apple.getY());
         }
+
+        // draw bonuses
         for(Bonus bonus : bonuses) {
             sb.draw(bonus1Texture, bonus.getX(), bonus.getY());
         }
+
+        // draw penalties
         for(Penalty penalty : penalties) {
             sb.draw(penalty.getTexture(), penalty.getX(), penalty.getY());
         }
+
+        // draw walls
         for(Vector2 brick : walls) {
             sb.draw(bricksTexture, brick.x, brick.y);
         }
+
+        // draw poops
+        for(Vector2 poop : poops) {
+            sb.draw(texture, poop.x, poop.y);
+        }
+
+        // draw scores
+        //stage.draw();
+        //stage.act();
 
         sb.end();
     }
@@ -261,6 +255,8 @@ public class PlayState extends State {
 
     private void initGame() {
 
+
+
         // assign a texture to each player
         playersTexture = new ArrayList<>();
         for(int i = 0; i < players.size(); i++) {
@@ -272,6 +268,7 @@ public class PlayState extends State {
         apples    = new ArrayList<>();
         bonuses   = new ArrayList<>();
         penalties = new ArrayList<>();
+        poops     = new ArrayList<>();
 
         // initialize walls schema
         WallsSchemasGenerator wallsSchemasGenerator = new WallsSchemasGenerator(1);

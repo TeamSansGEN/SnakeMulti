@@ -24,6 +24,7 @@ public class UDPSocketServer {
     private List<Apple> apples;
     private List<Bonus> bonuses;
     private List<Penalty> penalties;
+    private List<Vector2> poops;
     private List<Vector2> walls;
     private String [] playersList;
     private static int numberOfReadyPlayers = 0;
@@ -58,7 +59,7 @@ public class UDPSocketServer {
             DatagramPacket sendPacket = null;
             try {
                 socket.receive(packet);
-                System.out.println("RECEIVED PACKET FROM " + socket.getInetAddress());
+                //System.out.println("RECEIVED PACKET FROM " + socket.getInetAddress());
 
                 bufferReceive = packet.getData();
                 ByteArrayInputStream in = new ByteArrayInputStream(bufferReceive);
@@ -72,12 +73,12 @@ public class UDPSocketServer {
                 // update the game
                 game = game.update(walls);
 
+                game.setPlayers(players);
+
                 // new round
-                if(game == null) {
+                if(game.getNumberOfDead() >= players.size() - 1) {
                     initGame(playersList);
                 }
-
-                game.setPlayers(players);
 
                 // generate the packet from json string
                 bufferSend = gson.toJson(game).getBytes();
@@ -85,7 +86,7 @@ public class UDPSocketServer {
 
                 // send the current game value to all clients
                 socket.send(sendPacket);
-                System.out.println("PACKET SENT TO " + socket.getInetAddress());
+                //System.out.println("PACKET SENT TO " + socket.getInetAddress());
 
                 //TODO validate position
 
@@ -134,6 +135,7 @@ public class UDPSocketServer {
         apples    = new ArrayList<>();
         bonuses   = new ArrayList<>();
         penalties = new ArrayList<>();
+        poops     = new ArrayList<>();
 
         // Generate apples
         for(int i = 0; i < GameConstants.MAX_APPLES; i++) {
@@ -162,13 +164,14 @@ public class UDPSocketServer {
 
         }
 
-
-
-
-
-        // Initialize the game with all players and empty consumables lists
-        game = new Game(players, apples, bonuses, penalties);
-
+        // Keep scores of previous round(s)
+        if(game != null) {
+            game = new Game(players, apples, bonuses, penalties, poops, game.getPlayerScore());
+        }
+        else {
+            // Initialize the game for the FIRST TIME with all players and empty consumables lists
+            game = new Game(players, apples, bonuses, penalties, poops);
+        }
 
         // wait to receive 'ready' from all players
         // and send go when everyone is 'ready'.

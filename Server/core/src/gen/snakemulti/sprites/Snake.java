@@ -35,6 +35,8 @@ public class Snake implements Serializable {
     private String direction;
     private boolean alive;
 
+    private int score;
+
     private String name;
     private String ipAddress;
 
@@ -48,7 +50,6 @@ public class Snake implements Serializable {
         direction = directionInit;
         bodyParts = new ArrayList<Vector2>();
         bodyParts.add(headPosition);
-
         this.name = name;
         this.ipAddress = ipAddress;
 
@@ -225,6 +226,10 @@ public class Snake implements Serializable {
         if(newSpeed >= 0) {
             speed = newSpeed;
         }
+    }
+
+    public Vector2 getTailPosition() {
+        return tailPosition;
     }
 
     public void incrSpeed() {

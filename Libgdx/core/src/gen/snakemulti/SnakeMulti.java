@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import gen.snakemulti.gen.states.GameStateManager;
 import gen.snakemulti.gen.states.LobbyState;
+import gen.snakemulti.gen.states.LoginState;
 
 public class SnakeMulti extends ApplicationAdapter {
 
@@ -29,7 +30,8 @@ public class SnakeMulti extends ApplicationAdapter {
         gsm = new GameStateManager();
         Gdx.gl.glClearColor(1, 0, 0, 1);
 
-        gsm.push(new LobbyState(gsm));
+        //gsm.push(new LobbyState(gsm));
+        gsm.push(new LoginState(gsm));
 	}
 
 	// render method all the time in loop
