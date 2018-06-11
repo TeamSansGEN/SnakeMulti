@@ -205,6 +205,28 @@ public class Game {
         return "";
     }
 
+    public String eatPenalty(List<Vector2> walls) {
+        for (Snake snake : players.values()) {
+            // no need to check if the snake is dead
+            if (!snake.isAlive()) continue;
+
+            for(Penalty penalty : penalties) {
+                if(snake.getHeadPosition().x - penalty.getX() <= 32 && snake.getHeadPosition().y - penalty.getY() <= 32 &&
+                        snake.getHeadPosition().x - penalty.getX() >= 0 && snake.getHeadPosition().y - penalty.getY() >= 0) {
+                    penalty.setNewPosition();
+
+                    while (!Game.consumableValidPosition(penalty, walls, new ArrayList<Snake>(players.values()))) {
+                        penalty.setNewPosition();
+                    }
+
+                    return snake.getName();
+                }
+            }
+        }
+
+        return "";
+    }
+
     private boolean roundFinished() {
         if (numberOfDead >= players.size() - 1) {
             for (Snake s : players.values()) {
@@ -259,16 +281,26 @@ public class Game {
         final String playerEatsBonus = eatBonus(walls);
         if (!playerEatsBonus.equals("")) {
             // add effect of the bonus
-            players.get(playerEatsBonus).incrSpeed();
             playerSpeed.put(playerEatsBonus, playerSpeed.get(playerEatsBonus) + 1);
+
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-
                     playerSpeed.put(playerEatsBonus, playerSpeed.get(playerEatsBonus) - 1);
+                }
+            }, 3000);
+        }
 
-                    update(walls);
+        // check for eaten penalties
+        final String playerEatsPenalty = eatPenalty(walls);
+        if(!playerEatsPenalty.equals("")) {
+            // add effect of the penalty
+            playerSpeed.put(playerEatsPenalty, 0);
 
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    playerSpeed.put(playerEatsPenalty, 1);
                 }
             }, 3000);
         }

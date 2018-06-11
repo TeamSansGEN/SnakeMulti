@@ -69,8 +69,6 @@ public class LoginState extends State implements Input.TextInputListener {
            }
         });
 
-
-
         loginButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -84,12 +82,12 @@ public class LoginState extends State implements Input.TextInputListener {
                 }
             }
         });
+
         stage.addActor(usernameField);
         stage.addActor(passwordField);
         stage.addActor(loginButton);
 
         Gdx.input.setInputProcessor(stage);
-
     }
 
     @Override

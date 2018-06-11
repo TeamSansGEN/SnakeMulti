@@ -34,8 +34,10 @@ public class GameConstants {
      */
     public static final String SPEED_BONUS_TEXTURE_NAME = "bonusSpeed.png";
 
-
-    public static final String PENALTY_TEXTURE_NAME = "";
+    /**
+     * Texture name of the 'freeze' penalty
+     */
+    public static final String FREEZE_PENALTY_TEXTURE_NAME = "freezePenalty.png";
 
     /**
      * Texture name of the bricks
@@ -70,7 +72,7 @@ public class GameConstants {
     /**
      * Number of penalties
      */
-    public static final int MAX_PENALTIES = 1;
+    public static final int MAX_PENALTIES = 5;
 
     /**
      * Texture name of snakes

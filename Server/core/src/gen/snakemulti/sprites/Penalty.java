@@ -4,7 +4,11 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Penalty extends Consumable {
 
-    public Penalty(float x, float y, String texture) {
-        super(x, y, texture);
+    public Penalty(String textureName) {
+        super(textureName);
+    }
+
+    public Penalty(float x, float y, String textureName) {
+        super(x, y, textureName);
     }
 }

@@ -161,7 +161,12 @@ public class UDPSocketServer {
 
         // Generate penalties
         for(int i = 0; i < GameConstants.MAX_PENALTIES; i++) {
+            Penalty freezePenalty = new Penalty(GameConstants.FREEZE_PENALTY_TEXTURE_NAME);
 
+            while(!Game.consumableValidPosition(freezePenalty, walls, new ArrayList<Snake>(players.values()))) {
+                freezePenalty.setNewPosition();
+            }
+            penalties.add(freezePenalty);
         }
 
         // Keep scores of previous round(s)

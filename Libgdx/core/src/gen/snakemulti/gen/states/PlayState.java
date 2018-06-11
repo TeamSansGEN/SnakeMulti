@@ -62,6 +62,7 @@ public class PlayState extends State {
     private Texture bricksTexture = new Texture(GameConstants.BRICKS_TEXTURE_NAME);
     private Texture bonus1Texture = new Texture(GameConstants.SPEED_BONUS_TEXTURE_NAME);
     private Texture poopTexture = new Texture(GameConstants.POOP_TEXTURE_NAME);
+    private Texture freezePenaltyTexture = new Texture(GameConstants.FREEZE_PENALTY_TEXTURE_NAME);
     ///////////
 
     BitmapFont scoresFont;
@@ -190,7 +191,7 @@ public class PlayState extends State {
 
         // draw penalties
         for(Penalty penalty : penalties) {
-            sb.draw(penalty.getTexture(), penalty.getX(), penalty.getY());
+            sb.draw(freezePenaltyTexture, penalty.getX(), penalty.getY());
         }
 
         // draw walls
