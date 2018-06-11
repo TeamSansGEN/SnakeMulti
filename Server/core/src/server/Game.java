@@ -318,8 +318,9 @@ public class Game {
 
         for (Vector2 wall : walls) {
             //if(cons.getX() == wall.x && cons.getY() == wall.y) {
-            if (cons.getX() - wall.x <= 16 && cons.getX() - wall.x >= 0 &&
-                    cons.getY() - wall.y <= 16 && cons.getY() - wall.y >= 0) {
+            /*if (cons.getX() - wall.x < 16 && cons.getX() - wall.x >= 0 &&
+                    cons.getY() - wall.y < 16 && cons.getY() - wall.y >= 0) {*/
+            if(Math.abs(cons.getX() - wall.x) < cons.getSize() && Math.abs(cons.getY() - wall.y) < cons.getSize()) {
                 return false;
             }
         }

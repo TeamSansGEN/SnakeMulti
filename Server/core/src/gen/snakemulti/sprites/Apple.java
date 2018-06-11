@@ -1,5 +1,7 @@
 package gen.snakemulti.sprites;
 
+import server.GameConstants;
+
 public class Apple extends Consumable {
 
     //Random
@@ -9,12 +11,12 @@ public class Apple extends Consumable {
 
     }
 
-    public Apple(String textureName) {
-        super(textureName);
+    public Apple(String textureName, int size) {
+        super(textureName, size);
     }
 
-    public Apple(float x, float y, String textureName) {
-        super(x, y, textureName);
+    public Apple(float x, float y, String textureName, int size) {
+        super(x, y, textureName, size);
     }
 
 }

@@ -133,7 +133,7 @@ public class UDPSocketServer {
 
         // Generate apples
         for(int i = 0; i < GameConstants.MAX_APPLES; i++) {
-            Apple apple = new Apple(GameConstants.APPLE_TEXTURE_NAME);
+            Apple apple = new Apple(GameConstants.APPLE_TEXTURE_NAME, GameConstants.NORMAL_CONSUMABLE_SIZE);
 
             // Verify that the apple is not generated on an existing object
             while (!Game.consumableValidPosition(apple, walls, new ArrayList<Snake>(players.values()))) {
@@ -144,7 +144,7 @@ public class UDPSocketServer {
 
         for(int i = 0; i < GameConstants.MAX_BONUSES; i++) {
             // Generate bonuses
-            Bonus speedBonus = new Bonus(GameConstants.SPEED_BONUS_TEXTURE_NAME);
+            Bonus speedBonus = new Bonus(GameConstants.SPEED_BONUS_TEXTURE_NAME, GameConstants.NORMAL_CONSUMABLE_SIZE);
             //Bonus freezeSnakesBonus = new Bonus(GameConstants.FREEZE_SNAKES_BONUS_TEXTURE_NAME);
 
             // Verify that the bonus is not generated on an existing object
@@ -161,7 +161,7 @@ public class UDPSocketServer {
 
         // Generate penalties
         for(int i = 0; i < GameConstants.MAX_PENALTIES; i++) {
-            Penalty freezePenalty = new Penalty(GameConstants.FREEZE_PENALTY_TEXTURE_NAME);
+            Penalty freezePenalty = new Penalty(GameConstants.FREEZE_PENALTY_TEXTURE_NAME, GameConstants.FREEZE_PENALTY_SIZE);
 
             while(!Game.consumableValidPosition(freezePenalty, walls, new ArrayList<Snake>(players.values()))) {
                 freezePenalty.setNewPosition();

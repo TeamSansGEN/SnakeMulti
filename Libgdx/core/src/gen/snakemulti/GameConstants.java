@@ -25,6 +25,16 @@ public class GameConstants {
     public static final int BRICK_SIZE = 16;
 
     /**
+     * Default size of apples and bonuses
+     */
+    public static final int NORMAL_CONSUMABLE_SIZE = 16;
+
+    /**
+     * Default size of the 'freeze' penalty
+     */
+    public static final int FREEZE_PENALTY_SIZE = 32;
+
+    /**
      * Texture name of the apple
      */
     public static final String APPLE_TEXTURE_NAME = "apple16.png";
