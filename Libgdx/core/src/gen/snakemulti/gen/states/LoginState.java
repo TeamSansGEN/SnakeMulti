@@ -108,13 +108,12 @@ public class LoginState extends State implements Input.TextInputListener {
 
         sb.draw(background, 0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
 
+        sb.end();
+
         stage.draw();
         stage.act();
 
-
-        loginButton.draw(sb, 1);
-
-        sb.end();
+        //loginButton.draw(sb, 1);
     }
 
     @Override
@@ -128,7 +127,7 @@ public class LoginState extends State implements Input.TextInputListener {
     public void input(String text) {
     }
 
-    // Intergace Input.TextInputListener
+    // Interface Input.TextInputListener
     @Override
     public void canceled() {
 

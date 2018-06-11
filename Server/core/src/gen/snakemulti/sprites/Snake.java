@@ -49,7 +49,6 @@ public class Snake implements Serializable {
         alive = true;
         direction = directionInit;
         bodyParts = new ArrayList<Vector2>();
-        bodyParts.add(headPosition);
         this.name = name;
         this.ipAddress = ipAddress;
 

@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class PlayState extends State {
 
-    private static String IP_SERVER   = "192.168.0.46";
+    private static String IP_SERVER   = "10.192.91.177";
     private static int    PORT_SERVER = 2830;
 
     private String clientName;
@@ -61,6 +61,7 @@ public class PlayState extends State {
     private Texture textureApple = new Texture(GameConstants.APPLE_TEXTURE_NAME);
     private Texture bricksTexture = new Texture(GameConstants.BRICKS_TEXTURE_NAME);
     private Texture bonus1Texture = new Texture(GameConstants.SPEED_BONUS_TEXTURE_NAME);
+    private Texture poopTexture = new Texture(GameConstants.POOP_TEXTURE_NAME);
     ///////////
 
     BitmapFont scoresFont;
@@ -71,7 +72,7 @@ public class PlayState extends State {
     public PlayState(GameStateManager gsm, int numberOfPlayers) {
         super(gsm);
         this.numberOfPlayers = numberOfPlayers;
-        background = new Texture("backgroundLobby.png");
+        background = new Texture("background.png");
         players = new HashMap<String, Snake>();
 
         //apple = new Apple();
@@ -169,12 +170,12 @@ public class PlayState extends State {
         sb.begin();
         sb.draw(background, 0, 0, SnakeMulti.WIDTH, SnakeMulti.HEIGHT);
 
-        //int playerNumber = 1;
+        int playerNumber = 0;
         for(Snake s : players.values()) {
             for(int i = 0; i < s.getSize(); i++) {
-                sb.draw(texture, s.getBodyParts().get(i).x, s.getBodyParts().get(i).y);
+                sb.draw(GameConstants.SNAKE_TEXTURE[playerNumber], s.getBodyParts().get(i).x, s.getBodyParts().get(i).y);
             }
-            //playerNumber++;
+            playerNumber++;
         }
 
         // draw apples
@@ -199,12 +200,8 @@ public class PlayState extends State {
 
         // draw poops
         for(Vector2 poop : poops) {
-            sb.draw(texture, poop.x, poop.y);
+            sb.draw(poopTexture, poop.x, poop.y);
         }
-
-        // draw scores
-        //stage.draw();
-        //stage.act();
 
         sb.end();
     }
@@ -219,12 +216,7 @@ public class PlayState extends State {
         byte[] sendData;
 
         try {
-            ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-            ObjectOutput oo = new ObjectOutputStream(bStream);
-            oo.writeObject(snake);
-            oo.close();
-
-            sendData = bStream.toByteArray();
+            sendData = gson.toJson(snake).getBytes();
 
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(IP_SERVER), 2829);
             clientSocket.send(sendPacket);

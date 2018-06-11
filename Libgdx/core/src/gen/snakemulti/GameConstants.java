@@ -1,5 +1,7 @@
 package gen.snakemulti;
 
+import com.badlogic.gdx.graphics.Texture;
+
 public class GameConstants {
 
     /**
@@ -41,6 +43,11 @@ public class GameConstants {
     public static final String BRICKS_TEXTURE_NAME = "bricks16.png";
 
     /**
+     * Texture name of the poop
+     */
+    public static final String POOP_TEXTURE_NAME = "poop3.png";
+
+    /**
      * Growth of the snake whenever it eats an apple
      */
     public static final int GROWTH = 4;
@@ -64,4 +71,14 @@ public class GameConstants {
      * Number of penalties
      */
     public static final int MAX_PENALTIES = 1;
+
+    /**
+     * Texture name of snakes
+     */
+    public static final String[] SNAKE_TEXTURE_NAME = {"snake1.png", "snake2.png", "snake3.png", "snake4.png"};
+
+    /**
+     * Texture of snakes
+     */
+    public static final Texture[] SNAKE_TEXTURE = {new Texture(SNAKE_TEXTURE_NAME[0]), new Texture(SNAKE_TEXTURE_NAME[1]), new Texture(SNAKE_TEXTURE_NAME[2]), new Texture(SNAKE_TEXTURE_NAME[3])};
 }

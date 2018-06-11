@@ -59,23 +59,20 @@ public class UDPSocketServer {
             DatagramPacket sendPacket = null;
             try {
                 socket.receive(packet);
-                //System.out.println("RECEIVED PACKET FROM " + socket.getInetAddress());
 
-                bufferReceive = packet.getData();
-                ByteArrayInputStream in = new ByteArrayInputStream(bufferReceive);
-                ObjectInputStream is = new ObjectInputStream(in);
+                // Get snake from client
+                String snakeJson = new String(packet.getData(), 0, packet.getLength());
+                snake = gson.fromJson(snakeJson, Snake.class);
 
-                snake = (Snake) is.readObject();
-
-                // update the snake Object of the player
+                // Update the snake Object of the player
                 players.put(snake.getName(), snake);
 
-                // update the game
+                // Update the game
                 game = game.update(walls);
 
                 game.setPlayers(players);
 
-                // new round
+                // New round
                 if(game.getNumberOfDead() >= players.size() - 1) {
                     initGame(playersList);
                 }
@@ -86,13 +83,10 @@ public class UDPSocketServer {
 
                 // send the current game value to all clients
                 socket.send(sendPacket);
-                //System.out.println("PACKET SENT TO " + socket.getInetAddress());
 
                 //TODO validate position
 
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
@@ -150,13 +144,19 @@ public class UDPSocketServer {
 
         for(int i = 0; i < GameConstants.MAX_BONUSES; i++) {
             // Generate bonuses
-            Bonus bonus = new Bonus(GameConstants.SPEED_BONUS_TEXTURE_NAME);
+            Bonus speedBonus = new Bonus(GameConstants.SPEED_BONUS_TEXTURE_NAME);
+            //Bonus freezeSnakesBonus = new Bonus(GameConstants.FREEZE_SNAKES_BONUS_TEXTURE_NAME);
 
             // Verify that the bonus is not generated on an existing object
-            while (!Game.consumableValidPosition(bonus, walls, new ArrayList<Snake>(players.values()))) {
-                bonus.setNewPosition();
+            while (!Game.consumableValidPosition(speedBonus, walls, new ArrayList<Snake>(players.values()))) {
+                speedBonus.setNewPosition();
             }
-            bonuses.add(bonus);
+            /*while (!Game.consumableValidPosition(freezeSnakesBonus, walls, new ArrayList<Snake>(players.values()))) {
+                freezeSnakesBonus.setNewPosition();
+            }*/
+
+            bonuses.add(speedBonus);
+            //bonuses.add(freezeSnakesBonus);
         }
 
         // Generate penalties

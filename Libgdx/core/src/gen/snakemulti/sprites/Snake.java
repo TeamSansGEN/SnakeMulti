@@ -38,7 +38,6 @@ public class Snake implements Serializable {
     private String name;
     private String ipAddress;
 
-
     public Snake(float x, float y, String directionInit, String name, String ipAddress) {
         headPosition = new Vector2(x, y);
         tailPosition = new Vector2(headPosition.x, headPosition.y);

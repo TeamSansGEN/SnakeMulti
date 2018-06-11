@@ -32,6 +32,7 @@ public abstract class GameConstants {
      */
     public static final String SPEED_BONUS_TEXTURE_NAME = "bonusSpeed.png";
 
+    public static final String FREEZE_SNAKES_BONUS_TEXTURE_NAME = "freezeSnakes.png";
 
     public static final String PENALTY_TEXTURE_NAME = "";
 
@@ -72,4 +73,9 @@ public abstract class GameConstants {
      * Last  alive: 5 points
      */
     public static int[] SCORES = {0, 1, 3, 5};
+
+    /**
+     * Texture name of snakes
+     */
+    public static String[] SNAKE_TEXTURE = {"snake1.png", "snake2.png", "snake3.png", "snake4.png"};
 }

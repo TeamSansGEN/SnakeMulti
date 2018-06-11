@@ -228,7 +228,7 @@ public class Game {
     private void generatePoop(Snake s) {
         double randDouble = Math.random(); // [0, 1[
 
-        if (randDouble < 0.005) { //&& s.getName().equals("Jee")) {
+        if (randDouble < 0.0025) { //&& s.getName().equals("Jee")) {
             poops.add(new Vector2(s.getTailPosition().x, s.getTailPosition().y));
         }
     }
