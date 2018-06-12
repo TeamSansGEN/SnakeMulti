@@ -1,7 +1,6 @@
 package gen.snakemulti;
 
 import com.badlogic.gdx.math.Vector2;
-import gen.snakemulti.sprites.Wall;
 
 import java.util.ArrayList;
 import java.util.List;
