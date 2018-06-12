@@ -29,7 +29,7 @@ public class MenuState extends State {
 
     private Socket clientSocket;
 
-    public MenuState(final GameStateManager gsm, final String username, Socket clientSocket) {
+    public MenuState(final GameStateManager gsm, final String username, final Socket clientSocket) {
         super(gsm);
         background = new Texture("backgroundLobby3.png");
         this.username = username;
@@ -54,7 +54,8 @@ public class MenuState extends State {
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                gsm.set(new LobbyState(gsm, username));
+                //gsm.set(new LobbyState(gsm, username, clientSocket));
+                gsm.set(new PlayState(gsm, 2));
                 dispose();
             }
         });

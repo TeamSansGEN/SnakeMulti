@@ -17,17 +17,23 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import gen.snakemulti.GameConstants;
 
+import java.io.IOException;
+import java.net.Socket;
+
 
 public class LoginState extends State implements Input.TextInputListener {
 
     private Texture background;
     private ImageButton loginButton;
 
+    private Socket clientSocket;
+
     private Stage stage;
 
     public LoginState(final GameStateManager gsm) {
         super(gsm);
         background = new Texture("backgroundLobby3.png");
+
         Texture loginButtonTexture = new Texture("loginButton.png");
         Drawable loginButtonDrawable = new TextureRegionDrawable(new TextureRegion(loginButtonTexture));
         loginButton = new ImageButton(loginButtonDrawable);
@@ -76,10 +82,14 @@ public class LoginState extends State implements Input.TextInputListener {
                 // TODO: transfere pseudo/mdp au serveur, serveur check database, serveur répond au client: OUI/NON
                 String username = usernameField.getText();
                 String password = passwordField.getText();
-
+                try {
+                    clientSocket = new Socket("127.0.0.1", 2828);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 if(true) {
 
-                    gsm.set(new MenuState(gsm, username));
+                    gsm.set(new MenuState(gsm, username, clientSocket));
                     dispose();
                 }
             }
