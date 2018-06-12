@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import gen.snakemulti.GameConstants;
 import gen.snakemulti.SnakeMulti;
 
+import java.net.Socket;
+
 public class MenuState extends State {
 
     private Texture background;
@@ -25,10 +27,13 @@ public class MenuState extends State {
 
     private String username;
 
-    public MenuState(final GameStateManager gsm, final String username) {
+    private Socket clientSocket;
+
+    public MenuState(final GameStateManager gsm, final String username, Socket clientSocket) {
         super(gsm);
         background = new Texture("backgroundLobby3.png");
         this.username = username;
+        this.clientSocket = clientSocket;
 
         Texture playButtonTexture = new Texture("playButton.png");
         Texture leaderboardButtonTexture = new Texture("leaderboardButton.png");
