@@ -55,7 +55,7 @@ public class MenuState extends State {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //gsm.set(new LobbyState(gsm, username, clientSocket));
-                gsm.set(new PlayState(gsm, 2));
+                gsm.set(new PlayState(gsm, 3));
                 dispose();
             }
         });
