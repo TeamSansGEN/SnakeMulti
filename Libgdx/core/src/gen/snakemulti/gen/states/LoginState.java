@@ -2,16 +2,13 @@ package gen.snakemulti.gen.states;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.assets.loaders.AssetLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -30,12 +27,12 @@ public class LoginState extends State implements Input.TextInputListener {
 
     public LoginState(final GameStateManager gsm) {
         super(gsm);
-        background = new Texture("backgroundLobby.png");
+        background = new Texture("backgroundLobby3.png");
         Texture loginButtonTexture = new Texture("loginButton.png");
         Drawable loginButtonDrawable = new TextureRegionDrawable(new TextureRegion(loginButtonTexture));
         loginButton = new ImageButton(loginButtonDrawable);
         loginButton.setSize(130, 50);
-        loginButton.setPosition(GameConstants.WIDTH/2 - 130/2, GameConstants.HEIGHT/2 - 50/2);
+        loginButton.setPosition(GameConstants.WIDTH/2 - 130/2, GameConstants.HEIGHT/2 - 130/2 - 100);
 
         stage = new Stage();
 
@@ -43,9 +40,12 @@ public class LoginState extends State implements Input.TextInputListener {
         style.fontColor = Color.RED;
         style.font = new BitmapFont();
 
-        final TextField usernameField = new TextField("", style);
+        Skin skin = new Skin(Gdx.files.local("skin/uiskin.json"));
+
+        final TextField usernameField = new TextField("", skin);
         usernameField.setText("Enter your username");
-        usernameField.setPosition(GameConstants.WIDTH/2 - 130/2, GameConstants.HEIGHT/2 - 50/2 + 100);
+        usernameField.setSize(180, 30);
+        usernameField.setPosition(GameConstants.WIDTH/2 - 180/2, GameConstants.HEIGHT/2 + 50);
 
         usernameField.addListener(new ClickListener() {
             @Override
@@ -55,11 +55,12 @@ public class LoginState extends State implements Input.TextInputListener {
             }
         });
 
-        final TextField passwordField = new TextField("", style);
+        final TextField passwordField = new TextField("", skin);
         passwordField.setPasswordMode(true);
         passwordField.setPasswordCharacter('*');
         passwordField.setText("********");
-        passwordField.setPosition(GameConstants.WIDTH/2 - 130/2, GameConstants.HEIGHT/2 - 50/2 + 80);
+        passwordField.setSize(180, 30);
+        passwordField.setPosition(GameConstants.WIDTH/2 - 180/2, GameConstants.HEIGHT/2 - 50/2);
 
         passwordField.addListener(new ClickListener() {
            @Override
@@ -78,7 +79,8 @@ public class LoginState extends State implements Input.TextInputListener {
 
                 if(true) {
 
-                    gsm.set(new LobbyState(gsm, username));
+                    gsm.set(new MenuState(gsm, username));
+                    dispose();
                 }
             }
         });

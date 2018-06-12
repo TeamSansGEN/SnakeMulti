@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class PlayState extends State {
 
-    private static String IP_SERVER   = "10.192.91.177";
+    private static String IP_SERVER   = "192.168.0.46";
     private static int    PORT_SERVER = 2830;
 
     private String clientName;
@@ -86,7 +86,9 @@ public class PlayState extends State {
 
         try {
             clientSocket = new DatagramSocket(PORT_SERVER);
+            System.out.println("CLIENT OK");
         } catch (SocketException e) {
+            System.out.println("CLIENT EXCEPTION");
             e.printStackTrace();
         }
 
@@ -268,7 +270,7 @@ public class PlayState extends State {
         walls = wallsSchemasGenerator.getWallsSchema();
 
         // initialize the game object
-        //game = new Game(players, apples, bonuses, penalties);
+        game = new Game(players, apples, bonuses, penalties, poops);
 
         /*byte[] msg = "ready".getBytes();
 

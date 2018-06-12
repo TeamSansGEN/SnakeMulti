@@ -3,9 +3,9 @@ package gen.snakemulti.gen.states;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class State {
-    protected GameStateManager gsm;
+    private GameStateManager gsm;
 
-    protected State(GameStateManager gsm) {
+    public State(GameStateManager gsm) {
         this.gsm = gsm;
     }
 
