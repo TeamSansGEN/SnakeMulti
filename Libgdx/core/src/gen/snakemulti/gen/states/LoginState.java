@@ -32,15 +32,20 @@ public class LoginState extends State implements Input.TextInputListener {
     private Socket socket;
     private BufferedReader is;
     private PrintWriter os;
-    private String address = "127.0.0.1";
     private int port = 2828;
     private Socket clientSocket;
 
+    private String playerNum;
+    private String serverIP;
+
     private Stage stage;
 
-    public LoginState(final GameStateManager gsm) {
+    public LoginState(final GameStateManager gsm, final String playerNum, final String serverIP) {
         super(gsm);
         background = new Texture("backgroundLobby3.png");
+
+        this.playerNum = playerNum;
+        this.serverIP  = serverIP;
 
         Texture loginButtonTexture = new Texture("loginButton.png");
         Drawable loginButtonDrawable = new TextureRegionDrawable(new TextureRegion(loginButtonTexture));
@@ -94,8 +99,8 @@ public class LoginState extends State implements Input.TextInputListener {
 
                 try{
                     //Connexion TCP au serveur
-                    LOG.log(Level.INFO, "Connexion au serveur TCP à l'adresse " + address + ":" + port);
-                    socket = new Socket(address, port);
+                    LOG.log(Level.INFO, "Connexion au serveur TCP à l'adresse " + serverIP + ":" + port);
+                    socket = new Socket(serverIP, port);
                     LOG.log(Level.INFO, "Connecté au serveur!");
 
                     while(response != "true") {
@@ -128,7 +133,7 @@ public class LoginState extends State implements Input.TextInputListener {
 
                         //Si la saisie est exacte
                         if (response == "true") {
-                            gsm.set(new MenuState(gsm, username, socket));
+                            gsm.set(new MenuState(gsm, username, socket, playerNum, serverIP));
                             dispose();
 
                             //Arrêt de la connexion
@@ -142,13 +147,13 @@ public class LoginState extends State implements Input.TextInputListener {
                     e.getStackTrace();
                 }
                 try {
-                    clientSocket = new Socket("127.0.0.1", 2828);
+                    clientSocket = new Socket(serverIP, 2828);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 if(true) {
 
-                    gsm.set(new MenuState(gsm, username, clientSocket));
+                    gsm.set(new MenuState(gsm, username, clientSocket, playerNum, serverIP));
                     dispose();
                 }
             }

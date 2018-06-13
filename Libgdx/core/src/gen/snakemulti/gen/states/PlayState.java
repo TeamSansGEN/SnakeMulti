@@ -30,7 +30,7 @@ import java.util.Map;
 
 public class PlayState extends State {
 
-    private static String IP_SERVER   = "192.168.0.46";
+    private static String IP_SERVER;
     private static int    PORT_SERVER = 2830;
 
     private String clientName;
@@ -70,18 +70,15 @@ public class PlayState extends State {
     Label text;
     private Stage stage;
 
-    public PlayState(GameStateManager gsm, int numberOfPlayers) {
+    public PlayState(GameStateManager gsm, String playerNum, int numberOfPlayers, String serverIP) {
         super(gsm);
         this.numberOfPlayers = numberOfPlayers;
         background = new Texture("background.png");
         players = new HashMap<String, Snake>();
-
-        //apple = new Apple();
-
-        clientName = "Jee";
-        players.put("Jee", new Snake(48, 600, Snake.RIGHT, "Jee", "127.0.0.1"));
-        players.put("Lio", new Snake(800, 600, Snake.LEFT, "Lio", "127.0.0.1"));
-        players.put("Blanco", new Snake(800, 40, Snake.LEFT, "Blanco", "127.0.0.1"));
+        IP_SERVER = serverIP;
+        clientName = playerNum;
+        players.put("1", new Snake(48, 600, Snake.RIGHT, "1", "127.0.0.1"));
+        players.put("2", new Snake(800, 600, Snake.LEFT, "2", "127.0.0.1"));
 
         snake = getClientSnake(clientName);
 

@@ -72,8 +72,7 @@ public class MTSnakeServer {
         public void run() {
 
             UDPSocketServer s = new UDPSocketServer("127.0.0.1", portUDP);
-            s.initGame(new String[]{"Jee", "Lio"});
-            //s.initGame(new String[]{"Jee"});
+            s.initGame(new String[]{"1", "2"});
             s.listen();
         }
     }
@@ -107,7 +106,6 @@ public class MTSnakeServer {
                     Logger.getLogger(MTSnakeServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
         }
 
         /**

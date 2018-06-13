@@ -6,12 +6,15 @@ import gen.snakemulti.SnakeMulti;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		if(arg.length >= 2) {
+            LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
-		config.title  = SnakeMulti.TITLE;
-		config.width  = SnakeMulti.WIDTH;
-		config.height = SnakeMulti.HEIGHT;
+            config.title = SnakeMulti.TITLE;
+            config.width = SnakeMulti.WIDTH;
+            config.height = SnakeMulti.HEIGHT;
 
-		new LwjglApplication(new SnakeMulti(), config);
+            //new LwjglApplication(new SnakeMulti(arg[0], arg[1]), config);
+            new LwjglApplication(new SnakeMulti("1", "192.168.0.46"), config);
+        }
 	}
 }
