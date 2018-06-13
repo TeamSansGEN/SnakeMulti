@@ -17,11 +17,25 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import gen.snakemulti.GameConstants;
 
+import java.io.*;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class LoginState extends State implements Input.TextInputListener {
 
     private Texture background;
     private ImageButton loginButton;
+
+    final static Logger LOG = Logger.getLogger(LoginState.class.getName());
+
+    //Communication TCP
+    private Socket socket;
+    private BufferedReader is;
+    private PrintWriter os;
+    private String address = "127.0.0.1";
+    private int port = 2828;
 
     private Stage stage;
 
@@ -76,11 +90,56 @@ public class LoginState extends State implements Input.TextInputListener {
                 // TODO: transfere pseudo/mdp au serveur, serveur check database, serveur répond au client: OUI/NON
                 String username = usernameField.getText();
                 String password = passwordField.getText();
+                String response = "";
 
-                if(true) {
+                try{
+                    //Connexion TCP au serveur
+                    LOG.log(Level.INFO, "Connexion au serveur TCP à l'adresse " + address + ":" + port);
+                    socket = new Socket(address, port);
+                    LOG.log(Level.INFO, "Connecté au serveur!");
 
-                    gsm.set(new MenuState(gsm, username));
-                    dispose();
+                    while(response != "true") {
+                        //Envoi des identifiants de connexion
+                        os = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+                        is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                        //Lancement d'une demande de connexion
+                        LOG.log(Level.INFO, "Demande de connexion...");
+                        String hello = "LOGIN";
+                        os.println(hello);
+                        os.flush();
+
+                        is.readLine(); //attente de réponse
+
+                        //Envoi des identifiants
+                        String ids = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+                        os.println(ids);
+                        os.flush();
+
+                        //Lancement d'une demande de connexion
+                        LOG.log(Level.INFO, "Demande de connexion...");
+                        String end = "END";
+                        os.println(end);
+                        os.flush();
+
+
+                        //Vérification du compte
+                        response = is.readLine();
+
+                        //Si la saisie est exacte
+                        if (response == "true") {
+                            gsm.set(new MenuState(gsm, username, socket));
+                            dispose();
+
+                            //Arrêt de la connexion
+                            /*LOG.log(Level.INFO, "Connexion réussie...");
+                            String end = "END";
+                            os.println(end);
+                            os.flush();*/
+                        }
+                    }
+                }catch(IOException e){
+                    e.getStackTrace();
                 }
             }
         });
