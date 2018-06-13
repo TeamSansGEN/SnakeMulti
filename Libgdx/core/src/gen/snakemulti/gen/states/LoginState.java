@@ -21,8 +21,6 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.IOException;
-import java.net.Socket;
-
 
 public class LoginState extends State implements Input.TextInputListener {
 
@@ -140,8 +138,9 @@ public class LoginState extends State implements Input.TextInputListener {
                             os.flush();*/
                         }
                     }
-                }catch(IOException e){
+                }catch(IOException e) {
                     e.getStackTrace();
+                }
                 try {
                     clientSocket = new Socket("127.0.0.1", 2828);
                 } catch (IOException e) {
