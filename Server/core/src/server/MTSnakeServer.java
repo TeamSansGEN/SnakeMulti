@@ -1,6 +1,12 @@
 package server;
 
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import jdk.nashorn.internal.parser.JSONParser;
+import server.objects.User;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -132,7 +138,9 @@ public class MTSnakeServer {
                 out.println("Welcome to the Multi-Snake Server.\n");
                 out.flush();
 
-                while (true) {
+                boolean end = false;
+
+                while (!end) {
                     try {
                         LOG.info("Reading the client choice");
 
@@ -154,14 +162,30 @@ public class MTSnakeServer {
                                 }
 
                             } else if (line.equalsIgnoreCase(Protocol.CMD_END)) {
-                                //Quit the game
-                                //TODO
+                                end = true;
                             } else if (line.equalsIgnoreCase(Protocol.CMD_UPDATE)) {
 
                                 //TODO
                             } else if (line.equalsIgnoreCase(Protocol.CMD_LOGIN)) {
 
-                                //TODO
+                                LOG.log(Level.INFO, "Login: requête reçue");
+                                //Reponse de login
+                                LOG.log(Level.INFO, "Login: demande de récupération de login");
+                                out.println("Okay!");
+                                out.flush();
+
+                                //Réception des identifiants saisis et parsing
+                                LOG.log(Level.INFO, "Login: attente de la tentative d'identification...");
+                                String ids = in.readLine();
+                                LOG.log(Level.INFO, "Object : " + ids);
+
+                                //Conversion du string en object
+                                JsonParser jsonParser = new JsonParser();
+                                JsonObject objectFromString = jsonParser.parse(ids).getAsJsonObject();
+
+                                LOG.log(Level.INFO, "Username = ", objectFromString.isJsonNull());
+                                return;
+
                             } else if (line.equalsIgnoreCase(Protocol.CMD_LEADERBOARD)) {
                                 //Shows leaderboard
                                 //TODO

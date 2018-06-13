@@ -16,18 +16,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import gen.snakemulti.GameConstants;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.IOException;
+import java.net.Socket;
 
 
 public class LoginState extends State implements Input.TextInputListener {
 
     private Texture background;
     private ImageButton loginButton;
-
     final static Logger LOG = Logger.getLogger(LoginState.class.getName());
 
     //Communication TCP
@@ -36,12 +36,14 @@ public class LoginState extends State implements Input.TextInputListener {
     private PrintWriter os;
     private String address = "127.0.0.1";
     private int port = 2828;
+    private Socket clientSocket;
 
     private Stage stage;
 
     public LoginState(final GameStateManager gsm) {
         super(gsm);
         background = new Texture("backgroundLobby3.png");
+
         Texture loginButtonTexture = new Texture("loginButton.png");
         Drawable loginButtonDrawable = new TextureRegionDrawable(new TextureRegion(loginButtonTexture));
         loginButton = new ImageButton(loginButtonDrawable);
@@ -140,6 +142,15 @@ public class LoginState extends State implements Input.TextInputListener {
                     }
                 }catch(IOException e){
                     e.getStackTrace();
+                try {
+                    clientSocket = new Socket("127.0.0.1", 2828);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(true) {
+
+                    gsm.set(new MenuState(gsm, username, clientSocket));
+                    dispose();
                 }
             }
         });
