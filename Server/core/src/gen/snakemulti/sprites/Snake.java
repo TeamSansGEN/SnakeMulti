@@ -9,9 +9,7 @@ import java.util.List;
 
 public class Snake implements Serializable {
 
-
     private static final long serialVersionUID = 6529685098267757690L;
-    //TODO classe avec toutes les constantes
 
     public static final transient String UP    =    "up";
     public static final transient String LEFT  =  "left";
@@ -39,8 +37,6 @@ public class Snake implements Serializable {
 
     private String name;
     private String ipAddress;
-
-    //private transient List<Texture> snake;
 
     public Snake(float x, float y, String directionInit, String name, String ipAddress) {
         headPosition = new Vector2(x, y);
@@ -160,35 +156,6 @@ public class Snake implements Serializable {
         }
     }
 
-    /*
-    public void update(float dt) {
-        if(alive) {
-            moveSnake();
-            moveSnakeHead(dt);
-
-            if (headPosition.x >= SnakeMulti.WIDTH) {
-                headPosition.x = 0;
-            }
-
-            if (headPosition.x < 0) {
-                headPosition.x = SnakeMulti.WIDTH;
-            }
-
-            if (headPosition.y >= SnakeMulti.HEIGHT) {
-                headPosition.y = 0;
-            }
-
-            if (headPosition.y < 0) {
-                headPosition.y = SnakeMulti.HEIGHT;
-            }
-            alive = !collides();
-        }
-        else {
-
-        }
-    }
-    */
-
     public List<Vector2> getBodyParts() {
         return new ArrayList<Vector2>(bodyParts);
     }
@@ -196,10 +163,6 @@ public class Snake implements Serializable {
     public Vector2 getHeadPosition() {
         return headPosition;
     }
-
-    /*public List<Texture> getTexture() {
-        return new ArrayList<Texture>(snake);
-    }*/
 
     public void moveX(float amount) {
         headPosition.x += amount;

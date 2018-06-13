@@ -145,18 +145,13 @@ public class UDPSocketServer {
         for(int i = 0; i < GameConstants.MAX_BONUSES; i++) {
             // Generate bonuses
             Bonus speedBonus = new Bonus(GameConstants.SPEED_BONUS_TEXTURE_NAME, GameConstants.NORMAL_CONSUMABLE_SIZE);
-            //Bonus freezeSnakesBonus = new Bonus(GameConstants.FREEZE_SNAKES_BONUS_TEXTURE_NAME);
 
             // Verify that the bonus is not generated on an existing object
             while (!Game.consumableValidPosition(speedBonus, walls, new ArrayList<Snake>(players.values()))) {
                 speedBonus.setNewPosition();
             }
-            /*while (!Game.consumableValidPosition(freezeSnakesBonus, walls, new ArrayList<Snake>(players.values()))) {
-                freezeSnakesBonus.setNewPosition();
-            }*/
 
             bonuses.add(speedBonus);
-            //bonuses.add(freezeSnakesBonus);
         }
 
         // Generate penalties
@@ -178,9 +173,6 @@ public class UDPSocketServer {
             game = new Game(players, apples, bonuses, penalties, poops);
         }
 
-        // wait to receive 'ready' from all players
-        // and send go when everyone is 'ready'.
-        //receiveReadySendGo();
     }
 
     private void receiveReadySendGo() {

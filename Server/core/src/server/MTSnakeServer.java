@@ -72,8 +72,7 @@ public class MTSnakeServer {
         public void run() {
 
             UDPSocketServer s = new UDPSocketServer("127.0.0.1", portUDP);
-            s.initGame(new String[]{"Jee", "Lio"});
-            //s.initGame(new String[]{"Jee"});
+            s.initGame(new String[]{"1", "2"});
             s.listen();
         }
     }
@@ -107,7 +106,6 @@ public class MTSnakeServer {
                     Logger.getLogger(MTSnakeServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
         }
 
         /**
@@ -168,7 +166,7 @@ public class MTSnakeServer {
                                 //TODO
                             } else if (line.equalsIgnoreCase(Protocol.CMD_LOGIN)) {
 
-                                LOG.log(Level.INFO, "Login: requête reçue");
+                                /*LOG.log(Level.INFO, "Login: requête reçue");
                                 //Reponse de login
                                 LOG.log(Level.INFO, "Login: demande de récupération de login");
                                 out.println("Okay!");
@@ -184,7 +182,7 @@ public class MTSnakeServer {
                                 JsonObject objectFromString = jsonParser.parse(ids).getAsJsonObject();
 
                                 LOG.log(Level.INFO, "Username = ", objectFromString.isJsonNull());
-                                return;
+                                return;*/
 
                             } else if (line.equalsIgnoreCase(Protocol.CMD_LEADERBOARD)) {
                                 //Shows leaderboard

@@ -11,7 +11,7 @@ public class Consumable {
     private float x;
     private float y;
     private int size;
-    //private Texture texture;
+
     private String textureName;
 
     public Consumable() {
