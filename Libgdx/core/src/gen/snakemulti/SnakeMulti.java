@@ -18,7 +18,13 @@ public class SnakeMulti extends ApplicationAdapter {
     private GameStateManager gsm;
     private SpriteBatch batch; //heavy, should be only one
 
-	AssetManager assets;
+    private String playerNum;
+    private String serverIP;
+
+	public SnakeMulti(String playerNum, String serverIP) {
+	    this.playerNum = playerNum;
+	    this.serverIP = serverIP;
+    }
 
 	@Override
 	public void create() {
@@ -26,8 +32,7 @@ public class SnakeMulti extends ApplicationAdapter {
         gsm = new GameStateManager();
         Gdx.gl.glClearColor(1, 0, 0, 1);
 
-        //gsm.push(new MenuState(gsm));
-        gsm.push(new LoginState(gsm));
+        gsm.push(new LoginState(gsm, playerNum, serverIP));
 	}
 
 	// render method all the time in loop

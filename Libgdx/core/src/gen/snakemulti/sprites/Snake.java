@@ -11,7 +11,6 @@ import java.util.List;
 public class Snake implements Serializable {
 
     private static final long serialVersionUID = 6529685098267757690L;
-    //TODO classe avec toutes les constantes
 
     public static final transient String UP    =    "up";
     public static final transient String LEFT  =  "left";

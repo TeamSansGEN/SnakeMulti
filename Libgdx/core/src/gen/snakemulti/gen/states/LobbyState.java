@@ -1,9 +1,11 @@
 package gen.snakemulti.gen.states;
 
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import gen.snakemulti.GameConstants;
 
@@ -11,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
 
 public class LobbyState extends State {
 
@@ -19,18 +20,21 @@ public class LobbyState extends State {
 
     private String username;
     private String text;
-
+    private String serverResponse;
     private BitmapFont font;
-
+    private String playerNum;
+    private String serverIP;
     private Socket clientSocket;
 
 
-    public LobbyState(GameStateManager gsm, String username, Socket clientSocket) {
+    public LobbyState(final GameStateManager gsm, final String username, String playerNum, Socket clientSocket, String serverIP) {
         super(gsm);
         background = new Texture("backgroundLobby3.png");
         this.username = username;
         this.clientSocket = clientSocket;
-
+        this.playerNum = playerNum;
+        this.serverIP = serverIP;
+        serverResponse = "";
         text = "You're alone... :(";
 
         font = new BitmapFont();
@@ -38,7 +42,6 @@ public class LobbyState extends State {
         font.getData().setScale(1.5f, 1.5f);
 
         sendReady();
-
     }
 
     @Override
@@ -48,7 +51,15 @@ public class LobbyState extends State {
 
     @Override
     public void update(float dt) {
+        serverResponse = waitForGo();
 
+        if (!serverResponse.equalsIgnoreCase("") && !serverResponse.equalsIgnoreCase("READY2GO")) {
+            text = "Game starting in " + serverResponse + " second(s) !";
+        }
+        if (serverResponse.equalsIgnoreCase("GO")) {
+            gsm.set(new PlayState(gsm, playerNum, 2, serverIP));
+            dispose();
+        }
     }
 
     @Override
@@ -73,38 +84,33 @@ public class LobbyState extends State {
         try {
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-
-
-            while ((str = reader.readLine()) != null) {
-            }
+            str = reader.readLine();
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        } /*finally {
             try {
-                if(reader != null) {
+                if (reader != null) {
                     reader.close();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return str;
-        }
+
+        }*/
+        return str;
     }
 
     private void sendReady() {
         PrintWriter writer = null;
 
-        try {
-            // send 'ready' to server
-            writer = new PrintWriter(clientSocket.getOutputStream());
-            writer.println("READY," + username);
-            writer.flush();
+        // send 'ready' to server
+        writer = new PrintWriter(clientSocket.getOutputStream());
+        writer.println("READY," + username);
+        writer.flush();
 
-        } catch (IOException e) {
+         /*catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            writer.close();
-        }
+        }*/
     }
 }

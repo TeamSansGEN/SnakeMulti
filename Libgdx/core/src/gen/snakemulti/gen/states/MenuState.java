@@ -27,13 +27,18 @@ public class MenuState extends State {
 
     private String username;
 
+    private String playerNum;
+    private String serverIP;
+
     private Socket clientSocket;
 
-    public MenuState(final GameStateManager gsm, final String username, final Socket clientSocket) {
+    public MenuState(final GameStateManager gsm, final String username, final Socket clientSocket, final String playerNum, final String serverIP) {
         super(gsm);
         background = new Texture("backgroundLobby3.png");
         this.username = username;
         this.clientSocket = clientSocket;
+        this.playerNum = playerNum;
+        this.serverIP = serverIP;
 
         Texture playButtonTexture = new Texture("playButton.png");
         Texture leaderboardButtonTexture = new Texture("leaderboardButton.png");
@@ -55,7 +60,7 @@ public class MenuState extends State {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //gsm.set(new LobbyState(gsm, username, clientSocket));
-                gsm.set(new PlayState(gsm, 3));
+                gsm.set(new PlayState(gsm, playerNum, 2, serverIP));
                 dispose();
             }
         });
